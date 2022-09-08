@@ -6,12 +6,21 @@
           <div class="row">
             <div class="col-md-6 col-lg-12 col-xl-4 mb-4 mb-md-0">
               <div class="d-flex flex-wrap justify-content-center">
-                <button class="btn btn-primary btn-lg m-2">Group</button>
+                <!-- if group admin or super admin { show all }-->
+                <!-- else { show groups that you are added to }-->
+                <ng-container *ngIf="groupsList">
+                    <div *ngFor="let group of groupsList"> 
+                        <button class="btn btn-primary btn-lg m-2" (click)="navigateToChat(group.id)">{{ group.name }}</button>
+                    </div>
+                </ng-container>
+                
               </div>
+              <!-- if group admin or super admin -->
               <hr>
               <div class="d-flex justify-content-center">
                 <button class="btn btn-primary btn-lg m-2">Add Group</button>
               </div>
+              <!--  -->
             </div>
           </div>
         </div>
