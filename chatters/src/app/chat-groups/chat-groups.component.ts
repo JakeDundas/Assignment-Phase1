@@ -21,6 +21,9 @@ export class ChatGroupsComponent implements OnInit {
   }
 
   addNewGroup(groupName: string) {
+    if(groupName == "") {
+      groupName = "Default"
+    }
     const myuuid = uuidv4();
     const currentGroups = JSON.parse(localStorage.getItem('groupsList') ?? "[]");
     currentGroups.push({name: groupName, id: myuuid});
