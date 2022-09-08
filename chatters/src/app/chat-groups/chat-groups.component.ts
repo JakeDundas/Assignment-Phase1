@@ -21,14 +21,13 @@ export class ChatGroupsComponent implements OnInit {
   }
 
   addNewGroup(groupName: string) {
-    if(groupName == "") {
-      groupName = "Default"
+    if(groupName != "") {
+      const myuuid = uuidv4();
+      const currentGroups = JSON.parse(localStorage.getItem('groupsList') ?? "[]");
+      currentGroups.push({name: groupName, id: myuuid});
+      localStorage.setItem('groupsList', JSON.stringify(currentGroups))
+      this.ngOnInit();
     }
-    const myuuid = uuidv4();
-    const currentGroups = JSON.parse(localStorage.getItem('groupsList') ?? "[]");
-    currentGroups.push({name: groupName, id: myuuid});
-    localStorage.setItem('groupsList', JSON.stringify(currentGroups))
-    this.ngOnInit();
   }
 
 }

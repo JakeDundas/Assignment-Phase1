@@ -5,22 +5,27 @@
       <div class="card-body">
         <div class="row">
           <div class="col-md-12">
-              <!-- if group admin or super admin -->
+            <!-- if group admin or super admin -->
+            <form>
               <div class="input-group">
-                <input type="text" class="form-control" placeholder="Group name" #groupName aria-label="Group Name" aria-describedby="basic-addon2">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="inputGroup-sizing-default">Group Name</span>
+                </div>
+                <input type="text" class="form-control" placeholder="Default" #groupName aria-label="Default" aria-describedby="basic-addon2" required>
                 <div class="input-group-append">
-                  <button class="btn btn-primary" type="button" (click)="addNewGroup(groupName.value)">Add Group</button>
+                  <button class="btn btn-primary" type="submit" (click)="addNewGroup(groupName.value)">Add</button>
                 </div>
               </div>
-              <hr>
-              <!--  -->
-              <div class="d-flex flex-wrap justify-content-center overflow-auto">
+            </form>
+            <hr />
+            <!--  -->
+            <div class="d-flex flex-wrap justify-content-center overflow-auto">
               <!-- if group admin or super admin { show all }-->
               <!-- else { show groups that you are added to }-->
               <ng-container *ngIf="groupsList">
-                  <div *ngFor="let group of groupsList"> 
-                    <button class="btn btn-primary btn-lg m-2" (click)="navigateToChat(group.id)">{{ group.name }}</button>
-                  </div>
+                <div *ngFor="let group of groupsList">
+                  <button class="btn btn-primary btn-lg m-2" (click)="navigateToChat(group.id)">{{ group.name }}</button>
+                </div>
               </ng-container>
             </div>
           </div>
