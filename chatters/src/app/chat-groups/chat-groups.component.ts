@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-chat-groups',
@@ -8,13 +9,13 @@ import { Component, OnInit } from '@angular/core';
 export class ChatGroupsComponent implements OnInit {
   groupsList = [{name: "Group1", id: 1}, {name: "Group2", id: 2}, {name: "Group3", id: 3}, ];
   
-  constructor() { }
+  constructor(private router: Router) { }
 
   ngOnInit(): void {
   }
 
   navigateToChat(groupId: any) {
-
+    this.router.navigate(['chat', groupId])
   }
 
 }
