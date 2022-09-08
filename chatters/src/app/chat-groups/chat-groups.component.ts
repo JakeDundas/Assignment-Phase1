@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { v4 as uuidv4 } from 'uuid';
 
 @Component({
   selector: 'app-chat-groups',
@@ -7,7 +8,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./chat-groups.component.css']
 })
 export class ChatGroupsComponent implements OnInit {
-  groupsList = [{name: "Group1", id: 1}, {name: "Group2", id: 2}, {name: "Group3", id: 3}, ];
+  groupsList = JSON.parse(localStorage.getItem('groupsList') ?? "[]");
   
   constructor(private router: Router) { }
 
@@ -16,6 +17,17 @@ export class ChatGroupsComponent implements OnInit {
 
   navigateToChat(groupId: any) {
     this.router.navigate(['chat', groupId])
+  }
+
+  addNewGroup() {
+    const myuuid = uuidv4();
+    let currentGroups = JSON.parse(localStorage.getItem('groupsList') ?? "[]");
+    if(currentGroups.length) {
+       currentGroups.push({name: myuuid, id: myuuid});
+       localStorage.setItem('groupsList', JSON.stringify(currentGroups))
+    } else {
+      localStorage.setItem('groupsList', JSON.stringify([{name: myuuid, id: myuuid}]))
+    }
   }
 
 }
