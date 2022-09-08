@@ -8,8 +8,9 @@
               <div class="col-md-6 col-lg-5 col-xl-4 mb-4 mb-md-0">
                 <div class="overflow-auto" style="position: relative; height: 600px;">
                     <ng-container *ngIf="channelsList">
-                        <div *ngFor="let channel of channelsList"> 
+                        <div class="d-flex justify-content-between" *ngFor="let channel of channelsList"> 
                             <button class="btn btn-primary btn-lg m-2">{{ channel }}</button>
+                            <button type="button" class="btn btn-outline-danger btn-sm my-3">Delete</button>
                         </div>
                     </ng-container>
                 </div>
