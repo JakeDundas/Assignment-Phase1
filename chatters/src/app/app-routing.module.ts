@@ -1,10 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ChatMainComponent } from './chat-main/chat-main.component';
 import { ChatGroupsComponent } from './chat-groups/chat-groups.component';
+import { ChatComponent } from './chat/chat.component';
 
-const routes: Routes = [{path: '', component: ChatMainComponent},
+const routes: Routes = [{path: '', component: ChatGroupsComponent},
                         {path: 'groups', component: ChatGroupsComponent},
+                        {path: 'chat', component: ChatComponent},
                       ];
 
 @NgModule({
