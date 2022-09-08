@@ -8,11 +8,12 @@ import { v4 as uuidv4 } from 'uuid';
   styleUrls: ['./chat-groups.component.css']
 })
 export class ChatGroupsComponent implements OnInit {
-  groupsList = JSON.parse(localStorage.getItem('groupsList') ?? "[]");
+  groupsList: any;
   
   constructor(private router: Router) { }
 
   ngOnInit(): void {
+    this.groupsList = JSON.parse(localStorage.getItem('groupsList') ?? "[]");
   }
 
   navigateToChat(groupId: any) {
@@ -21,13 +22,10 @@ export class ChatGroupsComponent implements OnInit {
 
   addNewGroup() {
     const myuuid = uuidv4();
-    let currentGroups = JSON.parse(localStorage.getItem('groupsList') ?? "[]");
-    if(currentGroups.length) {
-       currentGroups.push({name: myuuid, id: myuuid});
-       localStorage.setItem('groupsList', JSON.stringify(currentGroups))
-    } else {
-      localStorage.setItem('groupsList', JSON.stringify([{name: myuuid, id: myuuid}]))
-    }
+    const currentGroups = JSON.parse(localStorage.getItem('groupsList') ?? "[]");
+    currentGroups.push({name: "group", id: myuuid});
+    localStorage.setItem('groupsList', JSON.stringify(currentGroups))
+    this.ngOnInit();
   }
 
 }
