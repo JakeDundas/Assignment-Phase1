@@ -6,31 +6,28 @@
           <div class="card-body">
             <div class="row">
               <div class="col-md-6 col-lg-5 col-xl-4 mb-4 mb-md-0">
-                  <button class="btn btn-primary">Channel</button><br><br>
-                  <button class="btn btn-primary">Channel</button><br><br>
-                  <button class="btn btn-primary">Channel</button><br><br>
-                  <button class="btn btn-primary">Channel</button><br><br>
+                <div class="overflow-auto" style="position: relative; height: 600px;">
+                    <ng-container *ngIf="channelsList">
+                        <div *ngFor="let channel of channelsList"> 
+                            <button class="btn btn-primary btn-lg m-2">{{ channel }}</button>
+                        </div>
+                    </ng-container>
+                </div>
+                <hr>
+                <button class="btn btn-primary mx-2" (click)="addNewChannel()">New Channel</button>
               </div>
   
               <div class="col-md-6 col-lg-7 col-xl-8">
-                  <div class="pt-3 pe-3" data-mdb-perfect-scrollbar="true" style="position: relative; height: 400px">
-                  <div>
-                      <li>message</li>
-                      <li>message</li>
-                      <li>message</li>
-                      <li>message</li>
-                      <li>message</li>
-                      <li>message</li>
-                      <li>message</li>
-                      <li>message</li>
-                      <li>message</li>
-                      <li>message</li>
-                      <li>message</li>
-                  </div>
-                  </div>
+                <div class="overflow-auto" style="position: relative; height: 600px;">
+                    <ng-container *ngIf="messageList">
+                        <div *ngFor="let message of messageList"> 
+                            <li>{{ message }}</li>
+                        </div>
+                    </ng-container>
+                </div>
                 <div class="text-muted d-flex justify-content-start align-items-center pe-3 pt-3 mt-2">
                   <input type="text" class="form-control form-control-lg" id="exampleFormControlInput2" placeholder="Type message">
-                  <button class="btn btn-primary mx-2">Send</button>
+                  <button class="btn btn-primary mx-2" (click)="addNewMessage()">Send</button>
                 </div>
               </div>
             </div>
