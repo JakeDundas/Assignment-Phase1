@@ -20,10 +20,10 @@ export class ChatGroupsComponent implements OnInit {
     this.router.navigate(['chat', groupId])
   }
 
-  addNewGroup() {
+  addNewGroup(groupName: string) {
     const myuuid = uuidv4();
     const currentGroups = JSON.parse(localStorage.getItem('groupsList') ?? "[]");
-    currentGroups.push({name: "group", id: myuuid});
+    currentGroups.push({name: groupName, id: myuuid});
     localStorage.setItem('groupsList', JSON.stringify(currentGroups))
     this.ngOnInit();
   }
