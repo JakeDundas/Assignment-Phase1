@@ -16,14 +16,18 @@ export class UsersComponent implements OnInit {
   }
 
   addNewUser(username:string, email:string) {
-    // if(groupName == "") {
-    //   groupName = "Default"
-    // }
-    // const myuuid = uuidv4();
-    // const currentGroups = JSON.parse(localStorage.getItem('groupsList') ?? "[]");
-    // currentGroups.push({name: groupName, id: myuuid});
-    // localStorage.setItem('groupsList', JSON.stringify(currentGroups))
-    this.ngOnInit();
+    const nonEmptyInput = (username != "" && email != "");
+    if(nonEmptyInput) {
+      const myuuid = uuidv4();
+      const currentUsers = JSON.parse(localStorage.getItem('usersList') ?? "[]");
+      
+      const usernameAlreadyExists = currentUsers.some((x: { username: string; }) => x.username == username)
+      if(!usernameAlreadyExists) {
+        currentUsers.push({username, email, id: myuuid, role: "user"});
+      localStorage.setItem('usersList', JSON.stringify(currentUsers))
+      this.ngOnInit();
+      }
+    }
   }  
 
 

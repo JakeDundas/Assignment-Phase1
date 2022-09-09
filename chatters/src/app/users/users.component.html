@@ -20,14 +20,14 @@
             </form>
             <hr />
             <!--  -->
-            <div class="d-flex flex-wrap justify-content-center overflow-auto">
-              <!-- if group admin or super admin { show all }-->
+            <div class="overflow-auto" style="position: relative; height: 600px;">
+                <!-- if group admin or super admin { show all }-->
               <!-- else { show groups that you are added to }-->
-              <!-- <ng-container *ngIf="groupsList">
-                  <div *ngFor="let group of groupsList"> 
-                    <button class="btn btn-primary btn-lg m-2" (click)="navigateToChat(group.id)">{{ group.name }}</button>
-                  </div>
-              </ng-container> -->
+              <ng-container *ngIf="usersList">
+                  <div *ngFor="let user of usersList"> 
+                    <li>{{user.username}}, {{user.email}}, {{user.id}}, {{user.role}}</li>
+                </div>
+              </ng-container>
             </div>
           </div>
         </div>
