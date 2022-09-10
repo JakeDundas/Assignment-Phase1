@@ -8,8 +8,16 @@
             <div class="overflow-auto" style="position: relative; height: 600px;">
                 <ng-container *ngIf="group.channels">
                     <div class="d-flex justify-content-between" *ngFor="let channel of group.channels"> 
-                        <button type="button" (click)="changeChannel(channel)" class="btn btn-primary btn-lg m-2">{{ channel.name }}</button>
+                        <!-- if user is in channel -->
+                        <div *ngIf="!channel.active; else elseBlock">
+                          <button type="button" (click)="changeChannel(channel)" class="btn btn-secondary btn-lg m-2">{{ channel.name }}</button>
+                        </div>
+                        <ng-template #elseBlock>
+                          <button type="button" (click)="changeChannel(channel)" class="btn btn-primary btn-lg m-2">{{ channel.name }}</button>
+                        </ng-template>
                         <button type="button" (click)="deleteChannel(channel.id)" class="btn btn-outline-danger btn-sm my-3">Delete</button>
+                        <!-- for each user in channel display username -->
+                        <!--  -->
                     </div>
                 </ng-container>
             </div>
@@ -39,3 +47,4 @@
     </div>
   </div>
 </div>
+

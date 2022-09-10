@@ -10,7 +10,7 @@ export class Group {
         this.id = uuidv4();
     }
 
-    newChannel(channelName: string) {
+    addNewChannel(channelName: string) {
         this.channels.push(new Channel(channelName));
     }
     

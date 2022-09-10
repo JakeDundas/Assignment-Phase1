@@ -5,6 +5,7 @@ export class Channel {
     id: string;
     public users: User[] = [];
     public messageHistory: string[] = [];
+    public active: boolean = false;
 
     constructor(public name: string) {
         this.name = name;
