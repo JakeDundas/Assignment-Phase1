@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { v4 as uuidv4 } from 'uuid';
 import { Channel } from '../shared/channel.model';
 
 @Component({
@@ -33,7 +32,6 @@ export class ChatComponent implements OnInit {
   }
 
   addNewChannel() {
-    const myuuid = uuidv4();
     this.group.channels.push(new Channel("Channel"));
     this.updateStorage();
     this.ngOnInit();

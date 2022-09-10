@@ -11,9 +11,9 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text" id="inputGroup-sizing-default">Group Name</span>
                 </div>
-                <input type="text" class="form-control" placeholder="Default" #groupName aria-label="Default" aria-describedby="basic-addon2" required>
+                <input type="text" class="form-control" [(ngModel)]="groupName" id="groupName" name="groupName" placeholder="Default" aria-label="Default" aria-describedby="basic-addon2" required>
                 <div class="input-group-append">
-                  <button class="btn btn-primary" type="submit" (click)="addNewGroup(groupName.value)">Add</button>
+                  <button class="btn btn-primary" type="submit" (click)="addNewGroup()">Add</button>
                 </div>
               </div>
             </form>
