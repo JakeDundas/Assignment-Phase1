@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { v4 as uuidv4 } from 'uuid';
+import { User } from '../shared/user.model';
 
 @Component({
   selector: 'app-users',
@@ -18,12 +18,10 @@ export class UsersComponent implements OnInit {
   addNewUser(username:string, email:string) {
     const nonEmptyInput = (username != "" && email != "");
     if(nonEmptyInput) {
-      const myuuid = uuidv4();
       const currentUsers = JSON.parse(localStorage.getItem('usersList') ?? "[]");
-      
       const usernameAlreadyExists = currentUsers.some((x: { username: string; }) => x.username == username)
       if(!usernameAlreadyExists) {
-        currentUsers.push({username, email, id: myuuid, role: "user"});
+        currentUsers.push(new User(username, email));
       localStorage.setItem('usersList', JSON.stringify(currentUsers))
       this.ngOnInit();
       }
