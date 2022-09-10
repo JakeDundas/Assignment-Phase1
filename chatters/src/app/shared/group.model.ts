@@ -4,6 +4,7 @@ import { Channel } from './channel.model';
 export class Group {
     id: string;
     channels: Channel[] = [];
+    users: string[] = [];
 
     constructor(public name: string) {
         this.name = name;
