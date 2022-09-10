@@ -28,6 +28,7 @@ export class ChatGroupsComponent implements OnInit {
       currentGroups.push(new Group(this.groupName));
       localStorage.setItem('groupsList', JSON.stringify(currentGroups))
       this.ngOnInit();
+      this.groupName = "";
     }
   }
 

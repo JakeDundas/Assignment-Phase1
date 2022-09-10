@@ -11,10 +11,10 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text" id="">Username and email</span>
                 </div>
-                <input type="text" class="form-control" #username required />
-                <input type="text" class="form-control" #email required />
+                <input type="text" class="form-control" [(ngModel)]="username" id="username" name="username" required />
+                <input type="text" class="form-control" [(ngModel)]="email" id="email" name="email" required />
                 <div class="input-group-append">
-                  <button class="btn btn-primary" type="submit" (click)="addNewUser(username.value, email.value)">Add</button>
+                  <button class="btn btn-primary" type="submit" (click)="addNewUser()">Add</button>
                 </div>
               </div>
             </form>
