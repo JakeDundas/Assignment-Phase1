@@ -27,12 +27,12 @@ export class ChatComponent implements OnInit {
     return groups[index];
   }
 
-  changeChannel(channel: any) {
+  changeChannel(channel: Channel) {
     this.currentChannel = channel;
   }
 
   addNewChannel() {
-    this.group.channels.push(new Channel("Channel"));
+    this.group.addNewChannel("Channel");
     this.updateStorage();
     this.ngOnInit();
   }

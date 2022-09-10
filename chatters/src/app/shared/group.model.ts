@@ -9,4 +9,10 @@ export class Group {
         this.name = name;
         this.id = uuidv4();
     }
+
+    newChannel(channelName: string) {
+        this.channels.push(new Channel(channelName));
+    }
+    
+
 }
