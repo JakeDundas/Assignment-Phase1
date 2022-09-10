@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { v4 as uuidv4 } from 'uuid';
+import { Group } from '../shared/group.model';
 
 @Component({
   selector: 'app-chat-groups',
@@ -22,9 +22,8 @@ export class ChatGroupsComponent implements OnInit {
 
   addNewGroup(groupName: string) {
     if(groupName != "") {
-      const myuuid = uuidv4();
       const currentGroups = JSON.parse(localStorage.getItem('groupsList') ?? "[]");
-      currentGroups.push({name: groupName, id: myuuid});
+      currentGroups.push(new Group(groupName));
       localStorage.setItem('groupsList', JSON.stringify(currentGroups))
       this.ngOnInit();
     }
