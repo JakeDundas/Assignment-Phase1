@@ -3,7 +3,7 @@ import { User } from './user.model';
 
 export class Channel {
     id: string;
-    public users: User[] = [];
+    public users: string[] = [];
     public messageHistory: string[] = [];
     public active: boolean = false;
 
