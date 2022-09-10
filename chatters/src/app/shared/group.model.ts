@@ -5,6 +5,7 @@ export class Group {
     id: string;
     channels: Channel[] = [];
     users: string[] = [];
+    groupAssisUsers: string[] = [];
 
     constructor(public name: string) {
         this.name = name;
