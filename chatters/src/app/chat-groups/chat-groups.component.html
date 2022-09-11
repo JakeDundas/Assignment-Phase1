@@ -5,8 +5,7 @@
       <div class="card-body">
         <div class="row">
           <div class="col-md-12">
-            <!-- if group admin or super admin -->
-            <form>
+            <form *ngIf="isGroupAdminOrSuperAdmin">
               <div class="input-group">
                 <div class="input-group-prepend">
                   <span class="input-group-text" id="inputGroup-sizing-default">Group Name</span>
@@ -16,8 +15,8 @@
                   <button class="btn btn-primary" type="submit" (click)="addNewGroup()">Add</button>
                 </div>
               </div>
+              <hr />
             </form>
-            <hr />
             <!--  -->
             <div class="d-flex flex-wrap justify-content-center overflow-auto">
               <!-- if group admin or super admin { show all }-->

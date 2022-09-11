@@ -11,11 +11,26 @@ import { Group } from '../shared/group.model';
 export class ChatGroupsComponent implements OnInit {
   groupsList: any;
   groupName: string = "";
+  isGroupAdminOrSuperAdmin: boolean = false;
   
   constructor(private router: Router) { }
 
   ngOnInit(): void {
-    this.groupsList = JSON.parse(localStorage.getItem('groupsList') ?? "[]");
+    this.initialiseGroupsForUser();
+  }
+
+  initialiseGroupsForUser() {
+    const allGroups = JSON.parse(localStorage.getItem('groupsList') ?? "[]");
+    const username = localStorage.getItem('username');
+    const groupsForUser = allGroups.filter((e: { users: any; }) => e.users.includes(username))
+    this.groupsList = groupsForUser;
+    const currentRole = localStorage.getItem('role');
+    if (currentRole == 'groupAdmin' || currentRole == 'superAdmin') {
+      this.isGroupAdminOrSuperAdmin = true;
+      this.groupsList = allGroups;
+    } else {
+      this.groupsList = groupsForUser;
+    }
   }
 
   navigateToChat(groupId: any) {
