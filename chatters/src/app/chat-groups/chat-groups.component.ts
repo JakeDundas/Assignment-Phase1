@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Group } from '../shared/group.model';
+import { GroupsService } from '../services/groups.service';
 
 @Component({
   selector: 'app-chat-groups',
@@ -9,28 +10,46 @@ import { Group } from '../shared/group.model';
   styleUrls: ['./chat-groups.component.css']
 })
 export class ChatGroupsComponent implements OnInit {
-  groupsList: any;
+  groupsList: Group[] = [];
   groupName: string = "";
-  isGroupAdminOrSuperAdmin: boolean = false;
+  isGroupAdminOrSuperAdmin: boolean = true;
   
-  constructor(private router: Router) { }
+  constructor(private router: Router, private groupsService: GroupsService) { } 
 
   ngOnInit(): void {
     this.initialiseGroupsForUser();
   }
 
-  initialiseGroupsForUser() {
-    const allGroups = JSON.parse(localStorage.getItem('groupsList') ?? "[]");
-    const username = localStorage.getItem('username');
-    const groupsForUser = allGroups.filter((e: { users: any; }) => e.users.includes(username))
-    this.groupsList = groupsForUser;
+  initialiseGroupsForUser() {  
     const currentRole = localStorage.getItem('role');
     if (currentRole == 'groupAdmin' || currentRole == 'superAdmin') {
       this.isGroupAdminOrSuperAdmin = true;
-      this.groupsList = allGroups;
+      this.groupsList = this.getAllGroups();
     } else {
-      this.groupsList = groupsForUser;
+      this.isGroupAdminOrSuperAdmin = false;
+      this.groupsList = this.getUserGroups();
     }
+  }
+
+  getAllGroups() {
+    const allGroups = this.groupsService.getGroupsData();
+    const groupsList = [];
+    for (let group of allGroups.values()) {
+      groupsList.push(group) 
+    }
+    return groupsList;  
+  }
+  
+  getUserGroups() {
+    const allGroups = this.groupsService.getGroupsData();
+    const groupsList = [];
+    const userId = localStorage.getItem('userId') ?? "";
+    for (let group of allGroups.values()) {
+      if (group.users.has(userId)) {
+        groupsList.push(group)
+      }
+    }
+    return groupsList;  
   }
 
   navigateToChat(groupId: any) {
@@ -39,9 +58,8 @@ export class ChatGroupsComponent implements OnInit {
 
   addNewGroup() {
     if(this.groupName != "") {
-      const currentGroups = JSON.parse(localStorage.getItem('groupsList') ?? "[]");
-      currentGroups.push(new Group(this.groupName));
-      localStorage.setItem('groupsList', JSON.stringify(currentGroups))
+      this.groupsService.newGroup(this.groupName);
+      this.groupsService.saveGroupsData();
       this.ngOnInit();
       this.groupName = "";
     }
