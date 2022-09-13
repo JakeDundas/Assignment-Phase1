@@ -11,11 +11,18 @@ export class UsersComponent implements OnInit {
   usersList: any;
   username: string = "";
   email: string = "";
+  isGroupAdminOrSuperAdmin: boolean = false;
 
   constructor() { }
 
   ngOnInit(): void {
     this.usersList = JSON.parse(localStorage.getItem('usersList') ?? "[]");
+    const currentRole = localStorage.getItem('role');
+    if (currentRole == 'groupAdmin' || currentRole == 'superAdmin') {
+      this.isGroupAdminOrSuperAdmin = true;
+    } else {
+      this.isGroupAdminOrSuperAdmin = false;
+    }
   }
 
   addNewUser() {
