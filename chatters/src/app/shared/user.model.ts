@@ -21,9 +21,8 @@ export class User {
     }
 }
 
-enum Role {
-    User,
-    GroupAssis,
-    GroupAdmin,
-    SuperAdmin
+export enum Role {
+    User = "user",
+    GroupAdmin = "groupAdmin",
+    SuperAdmin = "superAdmin"
 }

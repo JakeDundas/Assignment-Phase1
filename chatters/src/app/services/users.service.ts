@@ -40,6 +40,15 @@ export class UsersService {
     return false;
   }
 
+  checkForUsernameEmailMatch(username: String, email: String) {
+    for (let user of this.usersData.values()) {
+      if (user.username == username && user.email == email) {
+        return user;
+      }
+    }
+    return false;
+  }
+
   addUser(username: String, email: String) {
     const newUser = new User({username: username, email: email});
     this.usersData.set(newUser.id, newUser);
