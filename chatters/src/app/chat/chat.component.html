@@ -18,12 +18,12 @@
                           <ng-template #elseBlock>
                             <button type="button" (click)="changeChannel(channel)" class="btn btn-primary btn-lg m-2">{{ channel.name }}</button>
                           </ng-template>
-                          <button *ngIf="isGroupAdminOrSuperAdmin || isGroupAssis" type="button" (click)="deleteChannel(channel.id)" class="btn btn-outline-danger btn-sm my-3">Delete</button>
+                          <button *ngIf="isGroupAdminOrSuperAdmin || isGroupAssis" type="button" (click)="deleteChannel(channel)" class="btn btn-outline-danger btn-sm my-3">Delete</button>
                         </div>
                         <ng-container *ngIf="channel.users">
-                          <div class="d-flex flex-row align-items-center" *ngFor="let user of channel.users"> 
-                              <p class="mt-3 mx-5">{{user}}</p>
-                              <button *ngIf="isGroupAdminOrSuperAdmin || isGroupAssis" type="button" (click)="removeUser(user, channel.id)" class="btn btn-outline-danger btn-sm my-3">Remove</button>
+                          <div class="d-flex flex-row align-items-center" *ngFor="let user of channel.users.values()"> 
+                              <p class="mt-3 mx-5">{{user.username}}</p>
+                              <button *ngIf="isGroupAdminOrSuperAdmin || isGroupAssis" type="button" (click)="removeUser(user, channel)" class="btn btn-outline-danger btn-sm my-3">Remove</button>
                           </div>
                         </ng-container>
                     </div>
@@ -68,8 +68,8 @@
   <div>
     <h3>Group Members</h3>
     <ng-container *ngIf="group">
-      <div class="d-flex flex-row align-items-center" *ngFor="let user of group.users"> 
-        <p class="mt-3 mx-5">{{user}}</p>
+      <div class="d-flex flex-row align-items-center" *ngFor="let user of group.users.values()"> 
+        <p class="mt-3 mx-5">{{user.username}}</p>
         <button *ngIf="isGroupAdminOrSuperAdmin" type="button" (click)="promoteToGroupAssis(user)" class="btn btn-outline-info btn-sm my-3">Promote to Group Assis</button>
       </div>
     </ng-container>
@@ -77,8 +77,8 @@
   <div>
     <h3>Group Assis</h3>
     <ng-container *ngIf="group">
-      <div *ngFor="let user of group.groupAssisUsers"> 
-        <li>{{user}}</li>
+      <div *ngFor="let user of group.groupAssisUsers.values()"> 
+        <li>{{user.username}}</li>
       </div>
     </ng-container>
   </div>
