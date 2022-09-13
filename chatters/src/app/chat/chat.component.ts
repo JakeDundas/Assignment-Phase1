@@ -34,33 +34,51 @@ export class ChatComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getChannelsForUser();
+    this.initialiseChannelsForUser();
   }
 
-  getChannelsForUser() {
-    // const username = localStorage.getItem('username');
-    // const currentRole = localStorage.getItem('role');
-    // if (currentRole == 'groupAdmin' || currentRole == 'superAdmin') {
-    //   this.isGroupAdminOrSuperAdmin = true;
-    //   this.isGroupAssis = false;
-    //   this.channels = this.group.channels;
-    // } else if (this.group.groupAssisUsers.includes(username)) {
-    //   this.isGroupAdminOrSuperAdmin = false;
-    //   this.isGroupAssis = true;
-    //   this.channels = this.group.channels;
-    // } else {
-    //   this.isGroupAdminOrSuperAdmin = false;
-    //   this.isGroupAssis = false;
-    //   const userChannels = this.group.channels.filter((e: { users: any; }) => e.users.includes(username));
-    //   this.channels = userChannels;
-    // }
-    this.channels = [];
+  ngOnDestroy(): void {
+    if (this.currentChannel) {
+      this.currentChannel.active = false;
+    }
+    this.currentChannel = null;
+  }
+
+  initialiseChannelsForUser() {  
+    const currentRole = localStorage.getItem('role');
+    const userId = localStorage.getItem('userId') ?? "";
+    if (currentRole == 'groupAdmin' || currentRole == 'superAdmin') {
+      this.isGroupAdminOrSuperAdmin = true;
+      this.isGroupAssis = false;
+      this.channels = this.getAllChannels();
+    } else if (this.group.groupAssisUsers.has(userId)) {
+      this.isGroupAdminOrSuperAdmin = false;
+      this.isGroupAssis = true;
+      this.channels = this.getAllChannels();
+    } else {
+      this.isGroupAdminOrSuperAdmin = false;
+      this.isGroupAssis = false;
+      this.channels = this.getUserChannels();
+    }
+  }
+
+  getAllChannels() {
+    const channelsList = [];
     for (let channel of this.group.channels.values()) {
-      // if (channel.has(user.id)) {
-      //   this.channels.push(channel)
-      // }
-      this.channels.push(channel) 
-    }  
+      channelsList.push(channel) 
+    }
+    return channelsList;  
+  }
+  
+  getUserChannels() {
+    const channelsList = [];
+    const userId = localStorage.getItem('userId') ?? "";
+    for (let channel of this.group.channels.values()) {
+      if (channel.users.has(userId)) {
+        channelsList.push(channel)
+      }
+    }
+    return channelsList;  
   }
 
   changeChannel(channel: Channel) {
@@ -79,7 +97,6 @@ export class ChatComponent implements OnInit {
   }
 
   deleteChannel(channel: Channel) {
-    // TODO: deal with fringe case of deleting active channel
     this.group.channels.delete(channel.id);  
     this.updateStorage();
     this.ngOnInit();
