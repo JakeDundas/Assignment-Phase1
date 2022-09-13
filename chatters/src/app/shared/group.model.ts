@@ -9,8 +9,6 @@ export class Group {
     users = new Map<string, User>;
     groupAssisUsers = new Map<string, User>;
 
-    // constructor(name: string);
-    // constructor(public name: string, id?: string, channels?: Channel[], users?: User[], groupAssisUsers?: User[]) {
     constructor(public groupObject: any) {
         if(groupObject.id) {
             this.name = groupObject.name;
@@ -35,11 +33,4 @@ export class Group {
             this.id = uuidv4();
         }
     }
-
-    addNewChannel(channelName: string) {
-        const newChannel = new Channel({name: channelName})
-        this.channels.set(newChannel.id, newChannel);
-    }
-    
-
 }
