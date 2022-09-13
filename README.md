@@ -7,7 +7,7 @@
 
 ## Data Structures
 
-#### User
+### User
 
 A user is represented by a User class. This decision was due to the fact each User required an ID. The if statement in the constructor provides the flexibility to generate a brand new User, or to generate a User instance based on an Object representation of a User (like what output from a JSON file). 
 
@@ -42,7 +42,7 @@ export enum Role {
     SuperAdmin = "superAdmin"
 }
 ```
-#### Channel
+### Channel
 
 A channel is represented by a Channel class for similar reasons as User. 
 
@@ -74,7 +74,7 @@ export class Channel {
 }
 ```
 
-#### Group
+### Group
 
 A group is represented by a Group class for similar reasons as User. 
 
