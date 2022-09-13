@@ -22,4 +22,8 @@ export class GroupsService {
     return groupData;
   }
 
+  getGroupsData() {
+    return this.groupsData;
+  }
+
 }
