@@ -2,10 +2,13 @@
 ##### Jake Dundas - 3813ICT Software Frameworks - Assignment Phase 1
 
 ## Git Repository
+    
+    1. Data Structures
+    2. REST API
+    3. Angular Architecture
 
 
-
-## Data Structures
+## 1. Data Structures
 
 ### User
 
@@ -114,7 +117,10 @@ export class Group {
 }
 ```
 
-## REST API
+## 2. REST API
 
+
+
+## 3. Angular Architecture 
 
 
