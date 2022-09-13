@@ -54,6 +54,10 @@ export class UsersService {
     this.usersData.set(newUser.id, newUser);
   }
 
+  deleteUser(user: User) {
+    this.usersData.delete(user.id);
+  }
+
   saveUsersData() {
     this.localStorage.setUsersData(this.usersData);
   }
