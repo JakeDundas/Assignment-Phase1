@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { User } from '../shared/user.model';
+import { UsersService } from '../services/users.service';
 
 @Component({
   selector: 'app-users',
@@ -8,32 +9,32 @@ import { User } from '../shared/user.model';
   styleUrls: ['./users.component.css']
 })
 export class UsersComponent implements OnInit {
-  usersList: any;
+  usersList: User[] = [];
   username: string = "";
   email: string = "";
   isGroupAdminOrSuperAdmin: boolean = false;
 
-  constructor() { }
+  constructor(private usersService: UsersService) {
+  }
 
   ngOnInit(): void {
-    this.usersList = JSON.parse(localStorage.getItem('usersList') ?? "[]");
     const currentRole = localStorage.getItem('role');
-    if (currentRole == 'groupAdmin' || currentRole == 'superAdmin') {
-      this.isGroupAdminOrSuperAdmin = true;
-    } else {
-      this.isGroupAdminOrSuperAdmin = false;
-    }
+    this.isGroupAdminOrSuperAdmin = currentRole == 'groupAdmin' || currentRole == 'superAdmin' ? true : false;
+    const users = this.usersService.getUsersData();
+    this.usersList = [];
+    for (let user of users.values()) {
+      this.usersList.push(user) 
+    }  
   }
 
   addNewUser() {
     const nonEmptyInput = (this.username != "" && this.email != "");
     if(nonEmptyInput) {
-      const currentUsers = JSON.parse(localStorage.getItem('usersList') ?? "[]");
-      const usernameAlreadyExists = currentUsers.some((user: { username: string; }) => user.username == this.username)
+      const usernameAlreadyExists = this.usersService.usernameAlreadyExists(this.username)
       if(!usernameAlreadyExists) {
-        currentUsers.push(new User(this.username, this.email));
-      localStorage.setItem('usersList', JSON.stringify(currentUsers))
-      this.ngOnInit();
+        this.usersService.addUser(this.username, this.email);
+        this.usersService.saveUsersData();
+        this.ngOnInit();
       }
     }
   }  
