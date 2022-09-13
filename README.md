@@ -9,7 +9,9 @@
 
 #### User
 
-A user is represented by a User class.
+A user is represented by a User class. This decision was due to the fact each User required an ID. The if statement in the constructor provides the flexibility to generate a brand new User, or to generate a User instance based on an Object representation of a User (like what output from a JSON file). 
+
+When creating a new User, the constructor generates a UUID for the User. This is from the npm package 'uuid'. The role property that consists of the User, Group Admin, and Super Admin predfined constants.
 ```
 import { v4 as uuidv4 } from 'uuid';
 
