@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Channel } from '../shared/channel.model';
-import { User } from '../shared/user.model';
 
 @Component({
   selector: 'app-chat',
@@ -12,15 +12,39 @@ import { User } from '../shared/user.model';
 export class ChatComponent implements OnInit {
   groupId = "";
   group: any;
+  channels: any;
   currentChannel: Channel | null = null;
   messageContent: string = "";
   username: string = "";
+  isGroupAdminOrSuperAdmin: boolean = false;
+  isGroupAssis: boolean = false;
 
-  constructor(private route: ActivatedRoute) { }
+
+  constructor(private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit(): void {
     this.groupId = this.route.snapshot.params['groupId'];
     this.group = this.getCurrentGroupFromStorage();
+    this.getChannelsForUser();
+  }
+
+  getChannelsForUser() {
+    const username = localStorage.getItem('username');
+    const currentRole = localStorage.getItem('role');
+    if (currentRole == 'groupAdmin' || currentRole == 'superAdmin') {
+      this.isGroupAdminOrSuperAdmin = true;
+      this.isGroupAssis = false;
+      this.channels = this.group.channels;
+    } else if (this.group.groupAssisUsers.includes(username)) {
+      this.isGroupAdminOrSuperAdmin = false;
+      this.isGroupAssis = true;
+      this.channels = this.group.channels;
+    } else {
+      this.isGroupAdminOrSuperAdmin = false;
+      this.isGroupAssis = false;
+      const userChannels = this.group.channels.filter((e: { users: any; }) => e.users.includes(username));
+      this.channels = userChannels;
+    }
   }
 
   getCurrentGroupFromStorage() {
@@ -94,6 +118,14 @@ export class ChatComponent implements OnInit {
       this.updateStorage();
       this.ngOnInit();
     }
+  }
+
+  deleteGroup() {
+    const groups = JSON.parse(localStorage.getItem('groupsList') ?? "[]");
+    const index = groups.findIndex((group: { id: string; }) => group.id == this.groupId);
+    groups.splice(index, 1);
+    localStorage.setItem('groupsList', JSON.stringify(groups))
+    this.router.navigate(['groups'])
   }
 
   updateStorage() {

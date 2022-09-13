@@ -1,4 +1,7 @@
-<h2>Welcome to "{{group.id}}"</h2>
+<div class="d-flex justify-content-between">
+  <h2>Welcome to "{{group.id}}"</h2>
+  <button *ngIf="isGroupAdminOrSuperAdmin" type="button" (click)="deleteGroup()" class="btn btn-outline-danger btn-sm my-3">Delete Group</button>
+</div>
 <div class="row">
   <div class="col-md-12">
     <div class="card" id="chat" style="border-radius: 15px">
@@ -6,9 +9,8 @@
         <div class="row">
           <div class="col-md-6 col-lg-5 col-xl-4 mb-4 mb-md-0">
             <div class="overflow-auto" style="position: relative; height: 600px;">
-                <ng-container *ngIf="group.channels">
-                    <div *ngFor="let channel of group.channels"> 
-                        <!-- if user is in channel -->
+                <ng-container *ngIf="channels">
+                    <div *ngFor="let channel of channels"> 
                         <div class="d-flex justify-content-between">
                           <div *ngIf="!channel.active; else elseBlock">
                             <button type="button" (click)="changeChannel(channel)" class="btn btn-secondary btn-lg m-2">{{ channel.name }}</button>
@@ -16,19 +18,19 @@
                           <ng-template #elseBlock>
                             <button type="button" (click)="changeChannel(channel)" class="btn btn-primary btn-lg m-2">{{ channel.name }}</button>
                           </ng-template>
-                          <button type="button" (click)="deleteChannel(channel.id)" class="btn btn-outline-danger btn-sm my-3">Delete</button>
+                          <button *ngIf="isGroupAdminOrSuperAdmin || isGroupAssis" type="button" (click)="deleteChannel(channel.id)" class="btn btn-outline-danger btn-sm my-3">Delete</button>
                         </div>
                         <ng-container *ngIf="channel.users">
                           <div class="d-flex flex-row align-items-center" *ngFor="let user of channel.users"> 
                               <p class="mt-3 mx-5">{{user}}</p>
-                              <button type="button" (click)="removeUser(user, channel.id)" class="btn btn-outline-danger btn-sm my-3">Remove</button>
+                              <button *ngIf="isGroupAdminOrSuperAdmin || isGroupAssis" type="button" (click)="removeUser(user, channel.id)" class="btn btn-outline-danger btn-sm my-3">Remove</button>
                           </div>
                         </ng-container>
                     </div>
                 </ng-container>
             </div>
             <hr>
-            <button class="btn btn-primary mx-2" (click)="addNewChannel()">New Channel</button>
+            <button *ngIf="isGroupAdminOrSuperAdmin || isGroupAssis" class="btn btn-primary mx-2" (click)="addNewChannel()">New Channel</button>
           </div>
 
           <div class="col-md-6 col-lg-7 col-xl-8">
@@ -54,10 +56,10 @@
   </div>
 </div>
 <form>
-  <div class="input-group pt-4">
+  <div *ngIf="isGroupAdminOrSuperAdmin || isGroupAssis" class="input-group pt-4">
     <input type="text" class="form-control" placeholder="Enter username..." [(ngModel)]="username" id="username" name="username" aria-label="Default" aria-describedby="basic-addon2" required>
     <div class="input-group-append">
-      <button class="btn btn-primary" type="submit" (click)="addUserToGroup()">Add to Group</button>
+      <button *ngIf="isGroupAdminOrSuperAdmin" class="btn btn-primary" type="submit" (click)="addUserToGroup()">Add to Group</button>
       <button class="btn btn-primary" type="submit" (click)="addUserToSelectedChannel()">Add to Channel</button>
     </div>
   </div>
@@ -68,7 +70,7 @@
     <ng-container *ngIf="group">
       <div class="d-flex flex-row align-items-center" *ngFor="let user of group.users"> 
         <p class="mt-3 mx-5">{{user}}</p>
-        <button type="button" (click)="promoteToGroupAssis(user)" class="btn btn-outline-info btn-sm my-3">Promote to Group Assis</button>
+        <button *ngIf="isGroupAdminOrSuperAdmin" type="button" (click)="promoteToGroupAssis(user)" class="btn btn-outline-info btn-sm my-3">Promote to Group Assis</button>
       </div>
     </ng-container>
   </div>
