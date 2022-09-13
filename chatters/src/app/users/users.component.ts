@@ -39,5 +39,22 @@ export class UsersComponent implements OnInit {
     }
   }  
 
+  deleteUser(user: User) {
+    this.usersService.deleteUser(user);
+    this.usersService.saveUsersData();
+    this.ngOnInit();
+  }
+  
+  promoteToGroupAdmin(user: User) {
+    user.role = Role.GroupAdmin;
+    this.usersService.saveUsersData();
+    this.ngOnInit();
+  }
+  
+  promoteToSuperAdmin(user: User) {
+    user.role = Role.SuperAdmin;
+    this.usersService.saveUsersData();
+    this.ngOnInit();
+  }
 
 }

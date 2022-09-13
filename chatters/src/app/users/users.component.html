@@ -22,7 +22,12 @@
               <div class="overflow-auto" style="position: relative; height: 600px;">
                 <ng-container *ngIf="usersList">
                     <div *ngFor="let user of usersList"> 
-                      <li>{{user.username}}, {{user.email}}, {{user.id}}, {{user.role}}</li>
+                      <div class="d-flex">
+                        <p class="mt-2">{{user.username}}, {{user.email}}, {{user.id}}, {{user.role}}</p>
+                        <button *ngIf="isGroupAdminOrSuperAdmin" type="button" (click)="promoteToGroupAdmin(user)" class="btn btn-outline-info btn-sm m-2">Promote to Group Admin</button>
+                        <button *ngIf="isGroupAdminOrSuperAdmin" type="button" (click)="promoteToSuperAdmin(user)" class="btn btn-outline-info btn-sm m-2">Promote to Super Admin</button>
+                        <button *ngIf="isGroupAdminOrSuperAdmin" type="button" (click)="deleteUser(user)" class="btn btn-outline-danger btn-sm m-2">Delete</button>
+                      </div>
                   </div>
                 </ng-container>
               </div>
