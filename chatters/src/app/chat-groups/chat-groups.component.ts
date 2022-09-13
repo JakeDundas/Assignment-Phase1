@@ -14,7 +14,11 @@ export class ChatGroupsComponent implements OnInit {
   groupName: string = "";
   isGroupAdminOrSuperAdmin: boolean = true;
   
-  constructor(private router: Router, private groupsService: GroupsService) { } 
+  constructor(private router: Router, private groupsService: GroupsService) {
+    if(localStorage.getItem('username') == null) {
+      this.router.navigate(['login'])
+    }
+  } 
 
   ngOnInit(): void {
     this.initialiseGroupsForUser();

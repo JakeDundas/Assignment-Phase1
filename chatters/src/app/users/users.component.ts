@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { User } from '../shared/user.model';
+import { Router } from '@angular/router';
+import { User, Role } from '../shared/user.model';
 import { UsersService } from '../services/users.service';
 
 @Component({
@@ -14,7 +15,10 @@ export class UsersComponent implements OnInit {
   email: string = "";
   isGroupAdminOrSuperAdmin: boolean = false;
 
-  constructor(private usersService: UsersService) {
+  constructor(private router: Router, private usersService: UsersService) {
+    if(localStorage.getItem('username') == null) {
+      this.router.navigate(['login'])
+    }
   }
 
   ngOnInit(): void {
@@ -37,7 +41,7 @@ export class UsersComponent implements OnInit {
         this.ngOnInit();
       }
     }
-  }  
+  } 
 
   deleteUser(user: User) {
     this.usersService.deleteUser(user);

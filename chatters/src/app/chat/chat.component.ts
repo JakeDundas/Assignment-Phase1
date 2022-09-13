@@ -26,6 +26,9 @@ export class ChatComponent implements OnInit {
 
 
   constructor(private route: ActivatedRoute, private router: Router, private groupsService: GroupsService, private usersService: UsersService) { 
+    if(localStorage.getItem('username') == null) {
+      this.router.navigate(['login'])
+    }
     this.groupId = this.route.snapshot.params['groupId'];
     this.group = this.groupsService.getGroupData(this.groupId);
   }
