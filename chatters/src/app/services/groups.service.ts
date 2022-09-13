@@ -35,4 +35,9 @@ export class GroupsService {
     this.groupsData.delete(groupId);
   }
   
+  saveGroupsData() {
+    this.localStorage.setGroupsData(this.groupsData);
+  }
+
+
 }
