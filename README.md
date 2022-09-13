@@ -2,10 +2,9 @@
 ##### Jake Dundas - 3813ICT Software Frameworks - Assignment Phase 1
 
 ## Git Repository
-    
-    1. Data Structures
-    2. REST API
-    3. Angular Architecture
+   1. Data Structures
+   2. REST API
+   3. Angular Architecture
 
 
 ## 1. Data Structures
