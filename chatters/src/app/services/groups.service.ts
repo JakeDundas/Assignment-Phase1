@@ -26,4 +26,13 @@ export class GroupsService {
     return this.groupsData;
   }
 
+  newGroup(name: string) {
+    const newGroup = new Group({name: name});
+    this.groupsData.set(newGroup.id, newGroup);
+  }
+
+  deleteGroup(groupId: string) {
+    this.groupsData.delete(groupId);
+  }
+  
 }
