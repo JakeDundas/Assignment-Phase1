@@ -2,7 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Group } from '../shared/group.model';
 import { Channel } from '../shared/channel.model';
+import { User } from '../shared/user.model';
+import { GroupsService } from '../services/groups.service';
+import { UsersService } from '../services/users.service';
 
 @Component({
   selector: 'app-chat',
@@ -11,46 +15,49 @@ import { Channel } from '../shared/channel.model';
 })
 export class ChatComponent implements OnInit {
   groupId = "";
-  group: any;
-  channels: any;
+  group: Group;
+  channels: Channel[] = [];
   currentChannel: Channel | null = null;
+  
   messageContent: string = "";
   username: string = "";
-  isGroupAdminOrSuperAdmin: boolean = false;
-  isGroupAssis: boolean = false;
+  isGroupAdminOrSuperAdmin: boolean = true;
+  isGroupAssis: boolean = true;
 
 
-  constructor(private route: ActivatedRoute, private router: Router) { }
+  constructor(private route: ActivatedRoute, private router: Router, private groupsService: GroupsService, private usersService: UsersService) { 
+    this.groupId = this.route.snapshot.params['groupId'];
+    this.group = this.groupsService.getGroupData(this.groupId);
+  }
 
   ngOnInit(): void {
-    this.groupId = this.route.snapshot.params['groupId'];
-    this.group = this.getCurrentGroupFromStorage();
     this.getChannelsForUser();
   }
 
   getChannelsForUser() {
-    const username = localStorage.getItem('username');
-    const currentRole = localStorage.getItem('role');
-    if (currentRole == 'groupAdmin' || currentRole == 'superAdmin') {
-      this.isGroupAdminOrSuperAdmin = true;
-      this.isGroupAssis = false;
-      this.channels = this.group.channels;
-    } else if (this.group.groupAssisUsers.includes(username)) {
-      this.isGroupAdminOrSuperAdmin = false;
-      this.isGroupAssis = true;
-      this.channels = this.group.channels;
-    } else {
-      this.isGroupAdminOrSuperAdmin = false;
-      this.isGroupAssis = false;
-      const userChannels = this.group.channels.filter((e: { users: any; }) => e.users.includes(username));
-      this.channels = userChannels;
-    }
-  }
-
-  getCurrentGroupFromStorage() {
-    const groups = JSON.parse(localStorage.getItem('groupsList') ?? "[]");
-    const index = groups.findIndex((group: { id: string; }) => group.id == this.groupId);
-    return groups[index];
+    // const username = localStorage.getItem('username');
+    // const currentRole = localStorage.getItem('role');
+    // if (currentRole == 'groupAdmin' || currentRole == 'superAdmin') {
+    //   this.isGroupAdminOrSuperAdmin = true;
+    //   this.isGroupAssis = false;
+    //   this.channels = this.group.channels;
+    // } else if (this.group.groupAssisUsers.includes(username)) {
+    //   this.isGroupAdminOrSuperAdmin = false;
+    //   this.isGroupAssis = true;
+    //   this.channels = this.group.channels;
+    // } else {
+    //   this.isGroupAdminOrSuperAdmin = false;
+    //   this.isGroupAssis = false;
+    //   const userChannels = this.group.channels.filter((e: { users: any; }) => e.users.includes(username));
+    //   this.channels = userChannels;
+    // }
+    this.channels = [];
+    for (let channel of this.group.channels.values()) {
+      // if (channel.has(user.id)) {
+      //   this.channels.push(channel)
+      // }
+      this.channels.push(channel) 
+    }  
   }
 
   changeChannel(channel: Channel) {
@@ -62,27 +69,27 @@ export class ChatComponent implements OnInit {
   }
 
   addNewChannel() {
-    this.group.channels.push(new Channel("Channel"));;
+    const newChannel = new Channel({name: "Channel"});
+    this.group.channels.set(newChannel.id, newChannel);;
     this.updateStorage();
     this.ngOnInit();
   }
 
-  deleteChannel(channelId: string) {
+  deleteChannel(channel: Channel) {
     // TODO: deal with fringe case of deleting active channel
-    const index = this.group.channels.findIndex((channel: { id: string; }) => channel.id == channelId);
-    if (index > -1) {
-      this.group.channels.splice(index, 1)
-      this.updateStorage();
-      this.ngOnInit();
-    }
+    this.group.channels.delete(channel.id);  
+    this.updateStorage();
+    this.ngOnInit();
   }
 
   addUserToGroup() {
-    const currentUsers = JSON.parse(localStorage.getItem('usersList') ?? "[]");
-    const userExists = currentUsers.some((user: { username: string; }) => user.username == this.username);
-    const userInGroup = this.group.users.includes(this.username);
+    const currentUsers = this.usersService.getUsersData();
+    const inputUser = this.usersService.getUserFromUsername(this.username);
+    
+    const userExists = currentUsers.has(inputUser.id);
+    const userInGroup = this.group.users.has(inputUser.id);
     if (userExists && !userInGroup) {
-      this.group.users.push(this.username);
+      this.group.users.set(inputUser.id, inputUser);
       this.updateStorage();
       this.ngOnInit();
     }
@@ -90,49 +97,41 @@ export class ChatComponent implements OnInit {
 
   addUserToSelectedChannel() {
     if (this.currentChannel) {
-      const userInGroup = this.group.users.includes(this.username);
-      const userInChannel = this.currentChannel.users.includes(this.username);
+      const inputUser = this.usersService.getUserFromUsername(this.username);
+      const userInGroup = this.group.users.has(inputUser.id);
+      const userInChannel = this.currentChannel.users.has(inputUser.id);
       if (userInGroup && !userInChannel) {
-        this.currentChannel.users.push(this.username);
+        this.currentChannel.users.set(inputUser.id, inputUser);
         this.updateStorage();
         this.ngOnInit();
       }
     }
   }
 
-  removeUser(user: string, channelId: string) {
-    const index = this.group.channels.findIndex((channel: { id: string; }) => channel.id == channelId);
-    if (index > -1) {
-      let channelUsers = this.group.channels[index].users;
-      channelUsers.splice(channelUsers.indexOf(user, 1));
+  removeUser(user: User, channel: Channel) {
+      channel.users.delete(user.id);
       this.updateStorage();
       this.ngOnInit();
-    }
   }
 
-  promoteToGroupAssis(user: string) {
-    const userInGroup = this.group.users.includes(this.username);
-    const userInGroupAssis = this.group.groupAssisUsers.includes(user);
+  promoteToGroupAssis(user: User) {
+    const userInGroup = this.group.users.has(user.id);
+    const userInGroupAssis = this.group.groupAssisUsers.has(user.id);
     if (userInGroup && !userInGroupAssis) {
-      this.group.groupAssisUsers.push(user);
+      this.group.groupAssisUsers.set(user.id, user);
       this.updateStorage();
       this.ngOnInit();
     }
   }
 
   deleteGroup() {
-    const groups = JSON.parse(localStorage.getItem('groupsList') ?? "[]");
-    const index = groups.findIndex((group: { id: string; }) => group.id == this.groupId);
-    groups.splice(index, 1);
-    localStorage.setItem('groupsList', JSON.stringify(groups))
-    this.router.navigate(['groups'])
+    this.groupsService.deleteGroup(this.groupId);
+    this.updateStorage();
+    this.router.navigate(['groups']);
   }
 
   updateStorage() {
-    const groups = JSON.parse(localStorage.getItem('groupsList') ?? "[]");
-    const index = groups.findIndex((group: { id: string; }) => group.id == this.groupId);
-    groups[index] = this.group;
-    localStorage.setItem('groupsList', JSON.stringify(groups))
+    this.groupsService.saveGroupsData();
   }
 
   addNewMessage() {
