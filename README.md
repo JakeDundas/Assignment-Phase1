@@ -44,7 +44,75 @@ export enum Role {
 ```
 #### Channel
 
+A channel is represented by a Channel class for similar reasons as User. 
+
+The users within a channel are structured within a Map<string, User> type. Each user can be accessed through its id variable.
+```
+export class Channel {
+    name: string;
+    id: string;
+    users = new Map<string, User>;
+    messageHistory: string[] = [];
+    active: boolean = false;
+
+    constructor(public channelObject: any) {
+        if(channelObject.id) {
+            this.name = channelObject.name;
+            this.id = channelObject.id;
+            this.messageHistory = channelObject.messageHistory;
+            this.active = channelObject.active;
+
+            channelObject.users.forEach((userObject: any) => {
+                const user = new User(userObject);
+                this.users.set(user.id, user);
+            });
+        } else {
+            this.name = channelObject.name;
+            this.id = uuidv4();
+        }
+    }
+}
+```
+
 #### Group
+
+A group is represented by a Group class for similar reasons as User. 
+
+The users within a group are structured within a Map<string, User> type. Each user can be accessed through its id variable. And similarly with the Channels and Group Assis Users within a group. 
+```
+export class Group {
+    name: string;
+    id: string;
+    channels = new Map<string, Channel>;
+    users = new Map<string, User>;
+    groupAssisUsers = new Map<string, User>;
+
+    constructor(public groupObject: any) {
+        if(groupObject.id) {
+            this.name = groupObject.name;
+            this.id = groupObject.id;
+            
+            groupObject.channels.forEach((channelObject: any) => {
+                const channel = new Channel(channelObject);
+                this.channels.set(channel.id, channel);
+            });
+            
+            groupObject.users.forEach((userObject: any) => {
+                const user = new User(userObject);
+                this.users.set(user.id, user);
+            });
+
+            groupObject.groupAssisUsers.forEach((groupAssisUserObject: any) => {
+                const groupAssisUser = new User(groupAssisUserObject);
+                this.users.set(groupAssisUser.id, groupAssisUser);
+            });
+        } else {
+            this.name = groupObject.name;
+            this.id = uuidv4();
+        }
+    }
+}
+```
 
 ## REST API
 
