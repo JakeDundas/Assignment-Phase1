@@ -17,5 +17,9 @@ export class GroupsService {
     });
   }
 
+  getGroupData(groupId: string) {
+    const groupData = this.groupsData.get(groupId) ?? new Group({name: "This shouldn't exist"});
+    return groupData;
+  }
 
 }
