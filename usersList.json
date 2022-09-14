@@ -1,0 +1,32 @@
+{
+  "dataType": "Map",
+  "value": [
+    [
+      "228cddf8-8c99-42d5-bded-7c53bd513d11",
+      {
+        "username": "super",
+        "email": "super",
+        "id": "228cddf8-8c99-42d5-bded-7c53bd513d11",
+        "role": "user"
+      }
+    ],
+    [
+      "b2317f7f-a113-405a-a346-44849ef3fe24",
+      {
+        "username": "super",
+        "email": "super",
+        "id": "b2317f7f-a113-405a-a346-44849ef3fe24",
+        "role": "user"
+      }
+    ],
+    [
+      "5783a239-628b-4a9b-adaa-f980a874d0e1",
+      {
+        "username": "super",
+        "email": "super",
+        "id": "5783a239-628b-4a9b-adaa-f980a874d0e1",
+        "role": "user"
+      }
+    ]
+  ]
+}

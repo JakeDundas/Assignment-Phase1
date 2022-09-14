@@ -3,6 +3,14 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { User, Role } from '../shared/user.model';
 import { UsersService } from '../services/users.service';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+
+const httpOptions = {
+  headers: new HttpHeaders({ 'ContentType': 'application/json'})
+}
+
+const BACKEND_URL = 'http://localhost:3000'
+
 
 @Component({
   selector: 'app-users',
@@ -15,7 +23,7 @@ export class UsersComponent implements OnInit {
   email: string = "";
   isGroupAdminOrSuperAdmin: boolean = false;
 
-  constructor(private router: Router, private usersService: UsersService) {
+  constructor(private router: Router, private usersService: UsersService, private httpClient: HttpClient) {
     if(localStorage.getItem('username') == null) {
       this.router.navigate(['login'])
     }
@@ -31,16 +39,26 @@ export class UsersComponent implements OnInit {
     }  
   }
 
-  addNewUser() {
+  addNewUserLocally(newUser: any) {
     const nonEmptyInput = (this.username != "" && this.email != "");
     if(nonEmptyInput) {
       const usernameAlreadyExists = this.usersService.usernameAlreadyExists(this.username)
       if(!usernameAlreadyExists) {
-        this.usersService.addUser(this.username, this.email);
+        this.usersService.addUserLocally(newUser);
         this.usersService.saveUsersData();
         this.ngOnInit();
       }
     }
+  } 
+
+  addNewUser() {
+    this.httpClient.post(BACKEND_URL+'/newUser', {username: this.username, email: this.email}, httpOptions).subscribe((res: any) => {
+      if (res.valid) {        
+        this.addNewUserLocally(res.newUser);
+      } else {
+        alert("Invalid User")
+      }
+    })
   } 
 
   deleteUser(user: User) {
