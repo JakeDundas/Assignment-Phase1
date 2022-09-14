@@ -6,6 +6,7 @@
 Throughout development, Git was used primarily through the desktop app GitHub Desktop. Regular commits were made using the following message templates:
 -	feat: added X to Y
 -	refactor: have X use add()
+
 I found this method provided a more insightful view into the commit history. Branching was also performed when attempting a more significant development addition.
    
 The rest of this README provides insights into the following project aspects:
