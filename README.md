@@ -165,6 +165,12 @@ When a user attempts to create a new user with a username and email, a post requ
 
 ## 3. Angular Architecture 
 
+### Components
+
+#### Groups Component
+
 ![image](https://user-images.githubusercontent.com/103618540/190093798-a7797096-8d70-4b71-93d3-618ee470f360.png)
+
+The groups component 
 
 
