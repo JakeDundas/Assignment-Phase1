@@ -10,10 +10,6 @@ module.exports = {
         }
       });
 
-      res.send({
-        email: req.body.email,
-        password: req.body.password,
-        valid: false,
-      });
-    }),
+      res.send({valid: false});
+    })
 };
