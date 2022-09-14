@@ -2,9 +2,12 @@
 ##### Jake Dundas - 3813ICT Software Frameworks - Assignment Phase 1
 
 ## Git Repository
-   1. Data Structures
-   2. REST API
-   3. Angular Architecture
+   
+Throughout development    
+   
+   - Data Structures
+   - REST API
+   - Angular Architecture
 
 
 ## 1. Data Structures
@@ -118,8 +121,50 @@ export class Group {
 
 ## 2. REST API
 
+There are currently two routes for communication between the Angular front end and Node.js server:
 
+### Verify User
+```
+routeFunc: (app, usersList) =>
+ app.post("/auth", (req, res) => {
+   if (!req.body) {
+     return res.sendStatus(400);
+   }
+   usersList.forEach(user => {
+     if (req.body.username == user.username && req.body.email == user.email) {
+       return res.send({valid: true, user});
+     }
+   });
+
+   res.send({valid: false});
+ })
+```
+When a user attempts to log in with their username and email, a post request is made to the server's /auth route. This route takes as input, the list of all users that have been created. If the request body contains a username and email that matches any of the user list users, it responds with an object containing a 'valid: true' property, as well as the user details (to currently store in the browsers local storage). Otherwise responds with {valid: false}
+
+### New User
+```
+routeFunc: (app, dataManager) =>
+ app.post("/newUser", (req, res) => {
+   if (!req.body) {
+     return res.sendStatus(400);
+   }
+   dataManager.usersList.forEach(user => {
+     if (req.body.username == user.username) {
+       return res.send({valid: false});
+     }
+   })
+   const newUser = new User({username: req.body.username, email: req.body.email})
+   dataManager.usersList.set(newUser.id, newUser);
+   dataManager.saveUsersToFile(dataManager.usersList);
+   console.log(dataManager.usersList)
+   console.log(newUser)
+   res.send({valid: true, newUser});
+ })
+```
+When a user attempts to create a new user with a username and email, a post request is made to the server's /newUser route. This route takes as input, a dataManagement object. If the request body contains a username that matches any of the user list users, it responds with an object containing {valid: false}. Otherwise it creates a new User using the username and email provided, adds it to the global list of users and saves that list to file, and responds with a {valid: true, newUser} as well as the new user (to be displayed on the front end).
 
 ## 3. Angular Architecture 
+
+![image](https://user-images.githubusercontent.com/103618540/190093798-a7797096-8d70-4b71-93d3-618ee470f360.png)
 
 
