@@ -24,9 +24,47 @@ module.exports = {
             })
 
             socket.on('newRoom', newRoom => {
-                newGroup = new Channel
-                groupsList.set()
+                const newGroup = new Channel({name: "channel"})
+                groupsList.set(newGroup.id, newGroup)
+                chat.emit('roomList', JSON.stringify(newGroup, replacer))
             })
+
+            socket.on('roomsList', (m) => {
+                chat.emit('roomList', JSON.stringify(newGroup, replacer))
+            })
+
+            socket.on('numUsers', (room) => {
+                var userCount = 0;
+                for(i=0; socketRoomNum.length; i++) {
+                    if (socketRoomNum[i][0] == room) {
+                        userCount = socketRoomNum[i][1]
+                    }
+                }
+
+                chat.in(room).emit('numUsers', userCount)
+            })
+
+            socket.on("joinRoom", (room))
         })
+
+        function replacer(key, value) {
+            if(value instanceof Map) {
+                return {
+                dataType: 'Map',
+                value: Array.from(value.entries()),
+                };
+            } else {
+                return value;
+            }
+        }
+        
+        function reviver(key, value) {
+            if(typeof value === 'object' && value !== null) {
+              if (value.dataType === 'Map') {
+                return new Map(value.value);
+              }
+            }
+            return value;
+        }
     }
 }

@@ -11,7 +11,6 @@ const httpOptions = {
 
 const BACKEND_URL = 'http://localhost:3000'
 
-
 @Component({
   selector: 'app-users',
   templateUrl: './users.component.html',
