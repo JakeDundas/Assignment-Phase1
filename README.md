@@ -175,7 +175,13 @@ When a user attempts to create a new user with a username and email, a post requ
 
 ![image](https://user-images.githubusercontent.com/103618540/190098571-9c1345e2-121e-44a6-b738-024972700220.png)
 
-The login component is responsible for taking the username and email input, sending a post request to the server to verify user, and .
+The login component is responsible for taking the username and email input, sending a post request to the server to verify user, and saving the user details to the browsers local storage.
+
+#### Users Component
+
+![image](https://user-images.githubusercontent.com/103618540/190102026-d75b27d3-6df4-44e8-ae4d-12d740e2aedd.png)
+
+The groups component is responsible for displaying all of the appropriate Group instances for a given user. A regular user will only see the groups that they have been added to, where as a "Super Admin" or "Group Admin" has access to all groups. Only a "Super Admin" or "Group Admin" will have the Add Group section displayed to them. This section allows new groups to be created.
 
 #### Groups Component
 
@@ -183,15 +189,9 @@ The login component is responsible for taking the username and email input, send
 
 The groups component is responsible for displaying all of the appropriate Group instances for a given user. A regular user will only see the groups that they have been added to, where as a "Super Admin" or "Group Admin" has access to all groups. Only a "Super Admin" or "Group Admin" will have the Add Group section displayed to them. This section allows new groups to be created.
 
-#### Groups Component
+#### Chat Component
 
-![image](https://user-images.githubusercontent.com/103618540/190093798-a7797096-8d70-4b71-93d3-618ee470f360.png)
-
-The groups component is responsible for displaying all of the appropriate Group instances for a given user. A regular user will only see the groups that they have been added to, where as a "Super Admin" or "Group Admin" has access to all groups. Only a "Super Admin" or "Group Admin" will have the Add Group section displayed to them. This section allows new groups to be created.
-
-#### Groups Component
-
-![image](https://user-images.githubusercontent.com/103618540/190093798-a7797096-8d70-4b71-93d3-618ee470f360.png)
+![image](https://user-images.githubusercontent.com/103618540/190102351-e2795fe1-f436-4d08-87c3-ba3d5a489408.png)
 
 The groups component is responsible for displaying all of the appropriate Group instances for a given user. A regular user will only see the groups that they have been added to, where as a "Super Admin" or "Group Admin" has access to all groups. Only a "Super Admin" or "Group Admin" will have the Add Group section displayed to them. This section allows new groups to be created.
 
