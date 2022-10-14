@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Group } from '../shared/group.model';
+import { Group } from '../shared/newGroup.model';
 import { User } from '../shared/user.model';
 
 @Injectable({

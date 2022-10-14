@@ -1,14 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { UsersService } from '../services/users.service';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-
-const httpOptions = {
-  headers: new HttpHeaders({ 'ContentType': 'application/json'})
-}
-
-const BACKEND_URL = 'http://localhost:3000'
+import { AuthenticationService } from '../services/authentication.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -16,37 +10,26 @@ const BACKEND_URL = 'http://localhost:3000'
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  username: string = "";
   email: string = "";
+  password: string = "";
 
-  constructor(private router: Router, private usersService: UsersService, private httpClient: HttpClient) { }
+  constructor(private router: Router, private authenticationService: AuthenticationService) { }
 
   ngOnInit(): void {
   }
 
   attemptLogin() {
-    this.httpClient.post(BACKEND_URL+'/auth', {username: this.username, email: this.email}, httpOptions).subscribe((res: any) => {
-      if (res.valid) {
-        localStorage.setItem('username', res.user.username)
-        localStorage.setItem('email', res.user.email)
-        localStorage.setItem('userId', res.user.id)
-        localStorage.setItem('role', res.user.role)
-        this.router.navigate(['groups'])
+    this.authenticationService.attemptLogin({email: this.email, password: this.password}).subscribe((res: any) => {
+      if(res.error) {
+        alert(res.error)
       } else {
-        alert("Invalid User")
+        const validUser = res.user
+        localStorage.setItem('isLoggedIn', "true")
+        localStorage.setItem('userId', validUser._id)
+        localStorage.setItem('username', validUser.username)
+        localStorage.setItem('role', validUser.role)
+        this.router.navigate(['groups'])
       }
     })
   }
-
-  // attemptLogin() {
-  //   const validUser = this.usersService.checkForUsernameEmailMatch(this.username, this.email);
-  //   if (validUser) {
-  //     localStorage.setItem('role', validUser.role)
-  //     localStorage.setItem('username', validUser.username)
-  //     localStorage.setItem('userId', validUser.id)
-  //     this.router.navigate(['groups'])
-  //   }
-  // }
-
-
 }

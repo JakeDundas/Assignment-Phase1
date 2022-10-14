@@ -1,6 +1,6 @@
 module.exports = {
     listen: function(app, PORT) {
-        app.listen(PORT, () => {
+        app.listen(PORT, async () => {
             let d = new Date();
             let h = d.getHours();
             let m = d.getMinutes();

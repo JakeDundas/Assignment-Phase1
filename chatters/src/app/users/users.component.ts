@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { User, Role } from '../shared/user.model';
 import { UsersService } from '../services/users.service';
+import { AuthenticationService } from '../services/authentication.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 const httpOptions = {
@@ -20,10 +21,11 @@ export class UsersComponent implements OnInit {
   usersList: User[] = [];
   username: string = "";
   email: string = "";
+  password: string = "";
   isGroupAdminOrSuperAdmin: boolean = false;
 
-  constructor(private router: Router, private usersService: UsersService, private httpClient: HttpClient) {
-    if(localStorage.getItem('username') == null) {
+  constructor(private router: Router, private usersService: UsersService, private httpClient: HttpClient, private authenticationService: AuthenticationService) {
+    if(localStorage.getItem('isLoggedIn') != 'true') {
       this.router.navigate(['login'])
     }
   }
@@ -51,12 +53,15 @@ export class UsersComponent implements OnInit {
   } 
 
   addNewUser() {
-    this.httpClient.post(BACKEND_URL+'/newUser', {username: this.username, email: this.email}, httpOptions).subscribe((res: any) => {
-      if (res.valid) {        
-        this.addNewUserLocally(res.newUser);
-      } else {
-        alert("Invalid User")
-      }
+    // this.httpClient.post(BACKEND_URL+'/newUser', {username: this.username, email: this.email}, httpOptions).subscribe((res: any) => {
+    //   if (res.valid) {        
+    //     this.addNewUserLocally(res.newUser);
+    //   } else {
+    //     alert("Invalid User")
+    //   }
+    // })
+    this.authenticationService.register({username: this.username, email: this.email, password: this.password}).subscribe(data => {
+      console.log(data)
     })
   } 
 

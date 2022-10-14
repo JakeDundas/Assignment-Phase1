@@ -10,7 +10,8 @@ module.exports = {
         chat.on('connection', (socket) => {
             // When a connection request comes in output to the server console
             console.log('User connection on port ' + PORT + ': ' + socket.id);
-
+            
+            socket.on("joinRoom", (room))
             // When a message comes in, emit it back to all sockets with the message
             // socket.on('message', (message) => {
             //     chat.emit('message', message);
@@ -44,7 +45,6 @@ module.exports = {
                 chat.in(room).emit('numUsers', userCount)
             })
 
-            socket.on("joinRoom", (room))
         })
 
         function replacer(key, value) {

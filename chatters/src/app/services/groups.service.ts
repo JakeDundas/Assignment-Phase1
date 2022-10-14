@@ -36,7 +36,6 @@ export class GroupsService {
   }
   
   saveGroupsData() {
-    this.localStorage.setGroupsData(this.groupsData);
   }
 
 

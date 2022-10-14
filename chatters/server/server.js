@@ -10,20 +10,32 @@ const io = require("socket.io")(http, {
 })
 app.use(express.urlencoded({extended: true}));
 app.use(express.json())
+
+
 const sockets = require("./socket.js")
 const server = require("./listen.js")
+const api = require("./routes/api")
 
 app.use(cors());
 
 // Define port used for server
 const PORT = 3000;
 
-const DataManager = require('./services/dataManager').DataManager;
-const dataManager = new DataManager();
+app.post('/api/register', api.register)
+app.post('/api/login', api.login)
 
-require("./routes/auth").routeFunc(app, dataManager.usersList)
-require("./routes/newUser").routeFunc(app, dataManager)
+app.post('/api/getGroupsForUser', api.getGroupsForUser)
+app.post('/api/getGroup', api.getGroup)
+app.get('/api/getAllGroups', api.getAllGroups)
+app.post('/api/addNewGroup', api.addNewGroup)
+app.post('/api/promoteUserToGroupAssis', api.promoteUserToGroupAssis)
+app.post('/api/deleteGroup', api.deleteGroup)
 
+app.post('/api/getAllChannelsInGroup', api.getAllChannelsInGroup)
+app.post('/api/getAllUserChannelsInGroup', api.getAllUserChannelsInGroup)
+app.post('/api/getMessageHistory', api.getMessageHistory)
+app.post('/api/addNewChannel', api.addNewChannel)
+app.post('/api/deleteChannel', api.deleteChannel)
 
 // Setup socket
 sockets.connect(io, PORT);

@@ -12,9 +12,12 @@ export class AppComponent {
   constructor(private router: Router) {}
 
   logOut() {
-    localStorage.removeItem("username");
-    localStorage.removeItem("userId");
-    localStorage.removeItem("role");
-    this.router.navigate(['login'])
+    if(localStorage.getItem('isLoggedIn') == "true") {
+      localStorage.setItem('isLoggedIn', "false")
+      localStorage.removeItem("userId");
+      localStorage.removeItem("username");
+      localStorage.removeItem("role");
+      this.router.navigate(['login'])
+    }
   }
 }
