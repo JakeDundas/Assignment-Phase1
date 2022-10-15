@@ -29,12 +29,16 @@ app.post('/api/getGroup', api.getGroup)
 app.get('/api/getAllGroups', api.getAllGroups)
 app.post('/api/addNewGroup', api.addNewGroup)
 app.post('/api/promoteUserToGroupAssis', api.promoteUserToGroupAssis)
+app.post('/api/addUserToGroup', api.addUserToGroup)
+app.post('/api/removeUserFromGroup', api.removeUserFromGroup)
 app.post('/api/deleteGroup', api.deleteGroup)
 
 app.post('/api/getAllChannelsInGroup', api.getAllChannelsInGroup)
 app.post('/api/getAllUserChannelsInGroup', api.getAllUserChannelsInGroup)
+app.post('/api/addUserToChannel', api.addUserToChannel)
 app.post('/api/getMessageHistory', api.getMessageHistory)
 app.post('/api/addNewChannel', api.addNewChannel)
+app.post('/api/removeUserFromChannel', api.removeUserFromChannel)
 app.post('/api/deleteChannel', api.deleteChannel)
 
 // Setup socket

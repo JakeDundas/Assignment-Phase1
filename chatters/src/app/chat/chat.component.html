@@ -9,6 +9,7 @@
         <div class="row">
           <div class="col-md-6 col-lg-5 col-xl-4 mb-4 mb-md-0">
             <div class="overflow-auto" style="position: relative; height: 600px;">
+              <h4>Channels</h4>
               <ng-container *ngIf="newChannels">
                 <div *ngFor="let channel of newChannels"> 
                   <div class="d-flex justify-content-between">
@@ -21,6 +22,12 @@
                       </ng-template>
                     </div>
                     <button *ngIf="isGroupAdminOrSuperAdmin || isGroupAssis" type="button" class="btn btn-outline-danger btn-sm my-3" (click)="deleteChannel(channel._id)" onclick="return confirm('Are you sure?')">Delete</button>
+                  </div>
+                  <div *ngIf="channel._id == newCurrentChannel">
+                    <div class="d-flex" *ngFor="let user of channel.users"> 
+                      <p>{{user}}</p>
+                      <button *ngIf="isGroupAdminOrSuperAdmin" type="button" (click)="removeUserFromChannel(channel._id, user)" class="btn btn-outline-danger btn-sm m-1">Remove</button>
+                    </div>
                   </div>
                 </div>
               </ng-container>
@@ -60,7 +67,7 @@
 </div>
 <form>
   <div *ngIf="isGroupAdminOrSuperAdmin || isGroupAssis" class="input-group pt-4">
-    <input type="text" class="form-control" placeholder="Enter username..." [(ngModel)]="username" id="username" name="username" aria-label="Default" aria-describedby="basic-addon2" required>
+    <input type="text" class="form-control" placeholder="Enter email..." [(ngModel)]="inputEmail" id="inputEmail" name="inputEmail" aria-label="Default" aria-describedby="basic-addon2" required>
     <div class="input-group-append">
       <button *ngIf="isGroupAdminOrSuperAdmin" class="btn btn-primary" type="submit" (click)="addUserToGroup()">Add to Group</button>
       <button class="btn btn-primary" type="submit" (click)="addUserToSelectedChannel()">Add to Channel</button>
@@ -73,7 +80,8 @@
     <ng-container *ngIf="group.users">
       <div class="d-flex flex-row align-items-center" *ngFor="let user of group.users"> 
         <p class="mt-2 mx-5">{{user}}</p>
-        <button *ngIf="isGroupAdminOrSuperAdmin" type="button" (click)="promoteToGroupAssis(user)" class="btn btn-outline-info btn-sm my-1">Promote to Group Assis</button>
+        <button *ngIf="isGroupAdminOrSuperAdmin" type="button" (click)="promoteToGroupAssis(user)" class="btn btn-outline-info btn-sm m-1">Promote to Group Assis</button>
+        <button *ngIf="isGroupAdminOrSuperAdmin" type="button" (click)="removeUserFromGroup(user)" class="btn btn-outline-danger btn-sm m-1">Remove</button>
       </div>
     </ng-container>
   </div>

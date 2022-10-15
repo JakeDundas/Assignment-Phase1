@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { Group } from '../shared/newGroup.model';
+import { Group } from '../shared/group.model';
 import { DataService } from '../services/data.service';
 
 @Component({

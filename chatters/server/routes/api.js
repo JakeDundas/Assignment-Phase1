@@ -203,6 +203,46 @@ module.exports = {
     run().catch(console.dir);
   },
 
+  addUserToGroup: (req, res) => {
+    if (!req.body) {
+      return res.sendStatus(400);
+    }
+    const email = req.body.email;
+    const group_id = ObjectId(req.body.group_id);
+    
+    const client = new MongoClient(uri);
+    async function run() {
+      try {
+        const database = client.db("chatters");
+        const users = database.collection("users");
+        const query = { email };
+        console.log(query)
+        const doc = await users.findOne(query);
+        if(!doc) {
+          res.send({error: 'Email not found'})
+        } else {
+          const groups = database.collection("groups");
+          const _id = doc._id;
+          const query = { _id: group_id, users: _id };
+          const cursor = await groups.find(query);
+          if(await cursor.count() === 0) {
+            // add to group
+            const query = { _id: group_id };
+            const update = { $push: { users: _id } };
+            const doc = await groups.updateOne(query, update);
+            console.log(doc)
+            res.send({success: true, doc});
+          } else if (await cursor.count() !== 0) {
+            res.send({error: 'User already in group'})
+          }
+        }
+      } finally {
+        await client.close();
+      }
+    }
+    run().catch(console.dir);
+  },
+
   getAllChannelsInGroup: (req, res) => {
     if (!req.body) {
       return res.sendStatus(400);
@@ -214,7 +254,7 @@ module.exports = {
       try {
         const database = client.db("chatters");
         const channels = database.collection("channels");
-        const projection = { name: 1 };
+        const projection = { name: 1, users: 1 };
         const query = { group_id }
         const cursor = await channels.find(query).project(projection).toArray();
         if (!cursor) {
@@ -241,7 +281,7 @@ module.exports = {
       try {
         const database = client.db("chatters");
         const channels = database.collection("channels");
-        const projection = { name: 1 };
+        const projection = { name: 1, users: 1 };
         const query = {group_id, users: user_id}
         const cursor = await channels.find(query).project(projection).toArray();
         if (!cursor) {
@@ -249,6 +289,69 @@ module.exports = {
         } else {
           res.send({channels: cursor})
         }
+      } finally {
+        await client.close();
+      }
+    }
+    run().catch(console.dir);
+  },
+
+  addUserToChannel: (req, res) => {
+    if (!req.body) {
+      return res.sendStatus(400);
+    }
+    const email = req.body.email;
+    const channel_id = ObjectId(req.body.channel_id);
+    
+    const client = new MongoClient(uri);
+    async function run() {
+      try {
+        const database = client.db("chatters");
+        const users = database.collection("users");
+        const query = { email };
+        const doc = await users.findOne(query);
+        if(!doc) {
+          res.send({success: false, error: 'Email not found'})
+        } else {
+          const channels = database.collection("channels");
+          const _id = doc._id;
+          const query = { _id: channel_id, users: _id };
+          const cursor = await channels.find(query);
+          if(await cursor.count() === 0) {
+            // add to group
+            const query = { _id: channel_id };
+            const update = { $push: { users: _id } };
+            const doc = await channels.updateOne(query, update);
+            console.log(doc)
+            res.send({success: true, doc});
+          } else if (await cursor.count() !== 0) {
+            res.send({success: false, error: 'User already in channel'})
+          }
+        }
+      } finally {
+        await client.close();
+      }
+    }
+    run().catch(console.dir);
+  },
+
+  removeUserFromChannel: (req, res) => {
+    if (!req.body) {
+      return res.sendStatus(400);
+    }
+    const channel_id = ObjectId(req.body.channel_id);
+    const user_id = ObjectId(req.body.user_id);
+    
+    const client = new MongoClient(uri);
+    async function run() {
+      try {
+        const database = client.db("chatters");
+        const channels = database.collection("channels");
+        const query = { _id: channel_id };
+        const update = { $pull: { users: user_id } }
+        const doc = await channels.updateOne(query, update);
+        console.log(doc)
+        res.send(doc);
       } finally {
         await client.close();
       }
@@ -322,6 +425,30 @@ module.exports = {
         const channels = database.collection("channels");
         const channel = { _id };
         const doc = await channels.deleteOne(channel);
+        console.log(doc)
+        res.send(doc);
+      } finally {
+        await client.close();
+      }
+    }
+    run().catch(console.dir);
+  },
+
+  removeUserFromGroup: (req, res) => {
+    if (!req.body) {
+      return res.sendStatus(400);
+    }
+    const group_id = ObjectId(req.body.group_id);
+    const user_id = ObjectId(req.body.user_id);
+    
+    const client = new MongoClient(uri);
+    async function run() {
+      try {
+        const database = client.db("chatters");
+        const groups = database.collection("groups");
+        const query = { _id: group_id };
+        const update = { $pull: { users: user_id } }
+        const doc = await groups.updateOne(query, update);
         console.log(doc)
         res.send(doc);
       } finally {

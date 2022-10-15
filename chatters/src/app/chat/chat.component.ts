@@ -2,12 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Group } from '../shared/newGroup.model';
+
+import { Group } from '../shared/group.model';
 import { Channel } from '../shared/channel.model';
-import { NewChannel } from '../shared/newChannel.model';
 import { Message } from '../shared/message.model';
-import { User } from '../shared/user.model';
-import { GroupsService } from '../services/groups.service';
 import { DataService } from '../services/data.service';
 
 @Component({
@@ -18,19 +16,18 @@ import { DataService } from '../services/data.service';
 export class ChatComponent implements OnInit {
   groupId = "";
   group: Group = { _id: "", name: "", groupAssisUsers: [], users: [] };
-  channels: Channel[] = [];
 
   newGroupName: string = "";
   messageContent: string = "";
-  username: string = "";
+  inputEmail: string = "";
   isGroupAdminOrSuperAdmin: boolean = true;
   isGroupAssis: boolean = true;
 
   messages: Message[] = [];
-  newChannels: NewChannel[] = [];
+  newChannels: Channel[] = [];
   newCurrentChannel = "";
 
-  constructor(private route: ActivatedRoute, private router: Router, private groupsService: GroupsService, private dataService: DataService) {
+  constructor(private route: ActivatedRoute, private router: Router, private dataService: DataService) {
     if (localStorage.getItem('isLoggedIn') != 'true') {
       this.router.navigate(['login'])
     }
@@ -50,7 +47,6 @@ export class ChatComponent implements OnInit {
 
   getGroupDetails() {
     this.dataService.getGroup({ group_id: this.groupId }).subscribe((res: any) => {
-      console.log(res.group)
       this.group = res.group;
     })
   }
@@ -82,7 +78,6 @@ export class ChatComponent implements OnInit {
 
   getUserChannels() {
     this.dataService.getAllUserChannelsInGroup({ group_id: this.groupId, user_id: localStorage.getItem('userId') }).subscribe((res: any) => {
-      console.log(res.channels)
       this.newChannels = res.channels;
     })
   }
@@ -101,58 +96,57 @@ export class ChatComponent implements OnInit {
   }
 
   addNewChannel() {
-    this.dataService.addNewChannel({ group_id: this.groupId, name: this.newGroupName }).subscribe((res: any) => {
-      console.log(res)
-      this.newGroupName = ""
-      this.ngOnInit();
-    })
+    if(this.newGroupName) {
+      this.dataService.addNewChannel({ group_id: this.groupId, name: this.newGroupName }).subscribe((res: any) => {
+        this.newGroupName = ""
+        this.ngOnInit();
+      })
+    }
   }
 
   deleteChannel(channel_id: string) {
     this.dataService.deleteChannel({ channel_id }).subscribe((res: any) => {
-      console.log(res)
       this.ngOnInit();
     })
   }
 
   addUserToGroup() {
-    // const currentUsers = this.usersService.getUsersData();
-    // const inputUser = this.usersService.getUserFromUsername(this.username);
-
-    // const userExists = currentUsers.has(inputUser.id);
-    // const userInGroup = this.group.users.has(inputUser.id);
-    // if (userExists && !userInGroup) {
-    //   this.group.users.set(inputUser.id, inputUser);
-    //   this.updateStorage();
-    //   this.ngOnInit();
-    // }
+    if(this.inputEmail) {
+        this.dataService.addUserToGroup({ group_id: this.groupId, email: this.inputEmail }).subscribe((res: any) => {
+          this.ngOnInit();
+        })
+      }
   }
 
   addUserToSelectedChannel() {
-    // if (this.currentChannel) {
-    //   const inputUser = this.usersService.getUserFromUsername(this.username);
-    //   const userInGroup = this.group.users.has(inputUser.id);
-    //   const userInChannel = this.currentChannel.users.has(inputUser.id);
-    //   if (userInGroup && !userInChannel) {
-    //     this.currentChannel.users.set(inputUser.id, inputUser);
-    //     this.updateStorage();
-    //     this.ngOnInit();
-    //   }
-    // }
+    if (this.newCurrentChannel) {
+      this.dataService.addUserToChannel({ channel_id: this.newCurrentChannel, email: this.inputEmail }).subscribe((res: any) => {
+          if(res.success) {
+            this.ngOnInit();
+          } else {
+            console.log(res.error)
+          }
+      })      
+    }
   }
 
-  removeUser(user: User, channel: Channel) {
-    // channel.users.delete(user.id);
-    // this.updateStorage();
-    // this.ngOnInit();
+  removeUserFromGroup(user_id: string) {
+    this.dataService.removeUserFromGroup({ group_id: this.groupId, user_id }).subscribe((res: any) => {
+      this.ngOnInit();
+    })
   }
-
+  
+  removeUserFromChannel(channel_id: string, user_id: string) {
+    this.dataService.removeUserFromChannel({ channel_id, user_id }).subscribe((res: any) => {
+      this.ngOnInit();
+    })
+  }
+  
   promoteToGroupAssis(user_id: string) {
     const userInGroup = this.group.users.includes(user_id);
     const userInGroupAssis = this.group.groupAssisUsers.includes(user_id);
     if (userInGroup && !userInGroupAssis) {
       this.dataService.promoteUserToGroupAssis({ group_id: this.group._id, user_id }).subscribe((res: any) => {
-        console.log(res)
         this.ngOnInit();
       })
     }
@@ -163,10 +157,6 @@ export class ChatComponent implements OnInit {
       console.log(res)
       this.router.navigate(['groups']);
     })
-  }
-
-  updateStorage() {
-    this.groupsService.saveGroupsData();
   }
 
   addNewMessage() {
