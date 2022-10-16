@@ -11,6 +11,7 @@ import { ChatGroupsComponent } from './chat-groups/chat-groups.component';
 import { ChatComponent } from './chat/chat.component';
 import { UsersComponent } from './users/users.component';
 import { LoginComponent } from './login/login.component';
+import { NavbarComponent } from './navbar/navbar.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { LoginComponent } from './login/login.component';
     ChatGroupsComponent,
     ChatComponent,
     UsersComponent,
-    LoginComponent
+    LoginComponent,
+    NavbarComponent
   ],
   imports: [
     BrowserModule,
