@@ -41,6 +41,9 @@ app.post('/api/addNewChannel', api.addNewChannel)
 app.post('/api/removeUserFromChannel', api.removeUserFromChannel)
 app.post('/api/deleteChannel', api.deleteChannel)
 
+app.get('/api/getAllUsers', api.getAllUsers)
+
+
 // Setup socket
 sockets.connect(io, PORT);
 

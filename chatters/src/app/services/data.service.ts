@@ -44,28 +44,28 @@ export class DataService {
   addUserToGroup(user: { group_id: string, email: string }) {
     return this.httpClient.post<any>(this.uri + 'api/addUserToGroup', user);
   }
-  
+
+  // remove User From Group
+  removeUserFromGroup(group: { group_id: string, user_id: string }) {
+    return this.httpClient.post<any>(this.uri + 'api/removeUserFromGroup', group);
+  }
+
   // Channels
   // Get channels for a group that user is in
   getAllUserChannelsInGroup(group: { group_id: string, user_id: string | null }) {
     return this.httpClient.post<any>(this.uri + 'api/getAllUserChannelsInGroup', group);
   }
-  
+
   // Get all channels for a group
   getAllChannelsInGroup(group: { group_id: string }) {
     return this.httpClient.post<any>(this.uri + 'api/getAllChannelsInGroup', group);
   }
-  
-  // remove User From Group
-  removeUserFromGroup(group: { group_id: string , user_id: string}) {
-    return this.httpClient.post<any>(this.uri + 'api/removeUserFromGroup', group);
-  }  
-  
+
   // Add new channel
   addNewChannel(group: { group_id: string, name: string }) {
     return this.httpClient.post<any>(this.uri + 'api/addNewChannel', group);
   }
-  
+
   // Promote User To Group Assis
   addUserToChannel(user: { channel_id: string, email: string }) {
     return this.httpClient.post<any>(this.uri + 'api/addUserToChannel', user);
@@ -85,5 +85,12 @@ export class DataService {
   deleteChannel(channel: { channel_id: string }) {
     return this.httpClient.post<any>(this.uri + 'api/deleteChannel', channel);
   }
+
+  // Users
+  // Get all groups
+  getAllUsers() {
+    return this.httpClient.get<any>(this.uri + 'api/getAllUsers');
+  }
+
 
 }

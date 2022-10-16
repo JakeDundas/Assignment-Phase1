@@ -458,4 +458,28 @@ module.exports = {
     run().catch(console.dir);
   },
 
+  // Users
+  getAllUsers: (req, res) => {
+    if (!req.body) {
+      return res.sendStatus(400);
+    }
+    const client = new MongoClient(uri);
+    async function run() {
+      try {
+        const database = client.db("chatters");
+        const users = database.collection("users");
+        const projection = { username: 1, email: 1, role: 1 };
+        const cursor = await users.find().project(projection).toArray();
+        if (!cursor) {
+          res.send({ success: false, error: "No users found"})
+        } else {
+          res.send({ success: true, users: cursor })
+        }
+      } finally {
+        await client.close();
+      }
+    }
+    run().catch(console.dir);
+  },
+
 };
