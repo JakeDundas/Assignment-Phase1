@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { NavbarUpdaterService } from '../services/navbar-updater.service';
 
 @Component({
   selector: 'app-navbar',
@@ -7,8 +8,17 @@ import { Router } from '@angular/router';
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements OnInit {
+  isGroupAdminOrSuperAdmin = false
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private navbarUpdaterService: NavbarUpdaterService) {
+    navbarUpdaterService.itemValue.subscribe((nextValue) => {
+      if(nextValue == 'groupAdmin' || nextValue == 'superAdmin') {
+        this.isGroupAdminOrSuperAdmin = true
+      } else {
+        this.isGroupAdminOrSuperAdmin = false
+      }
+   })
+  }
 
   ngOnInit(): void {
   }

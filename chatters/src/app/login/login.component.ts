@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthenticationService } from '../services/authentication.service';
-import { HttpClient } from '@angular/common/http';
+import { NavbarUpdaterService } from '../services/navbar-updater.service';
 
 @Component({
   selector: 'app-login',
@@ -13,7 +13,7 @@ export class LoginComponent implements OnInit {
   email: string = "";
   password: string = "";
 
-  constructor(private router: Router, private authenticationService: AuthenticationService) { }
+  constructor(private router: Router, private authenticationService: AuthenticationService, private navbarUpdaterService: NavbarUpdaterService) { }
 
   ngOnInit(): void {
   }
@@ -22,14 +22,14 @@ export class LoginComponent implements OnInit {
     this.authenticationService.attemptLogin({email: this.email, password: this.password}).subscribe((res: any) => {
       if(res.error) {
         alert(res.error)
-      } else {
-        const validUser = res.user
-        localStorage.setItem('isLoggedIn', "true")
-        localStorage.setItem('userId', validUser._id)
-        localStorage.setItem('username', validUser.username)
-        localStorage.setItem('role', validUser.role)
-        this.router.navigate(['groups'])
+        return;
       }
+      const validUser = res.user
+      localStorage.setItem('isLoggedIn', "true")
+      localStorage.setItem('userId', validUser._id)
+      localStorage.setItem('username', validUser.username)
+      this.navbarUpdaterService.currentUserRole = validUser.role
+      this.router.navigate(['groups'])
     })
   }
 }

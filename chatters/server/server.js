@@ -18,9 +18,6 @@ const api = require("./routes/api")
 
 app.use(cors());
 
-// Define port used for server
-const PORT = 3000;
-
 app.post('/api/register', api.register)
 app.post('/api/login', api.login)
 
@@ -43,6 +40,8 @@ app.post('/api/deleteChannel', api.deleteChannel)
 
 app.get('/api/getAllUsers', api.getAllUsers)
 
+// Define port used for server
+const PORT = 3000
 
 // Setup socket
 sockets.connect(io, PORT);

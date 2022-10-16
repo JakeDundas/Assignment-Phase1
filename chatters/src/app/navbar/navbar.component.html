@@ -15,7 +15,7 @@
             <li class="nav-item">
             <a class="nav-link" routerLink="/groups">Groups</a>
             </li>
-            <li class="nav-item">
+            <li *ngIf="isGroupAdminOrSuperAdmin" class="nav-item">
             <a class="nav-link" routerLink="/users">Users</a>
             </li>
         </ul>

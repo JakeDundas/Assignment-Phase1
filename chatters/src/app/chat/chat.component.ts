@@ -7,6 +7,7 @@ import { Group } from '../shared/group.model';
 import { Channel } from '../shared/channel.model';
 import { Message } from '../shared/message.model';
 import { DataService } from '../services/data.service';
+import { SocketService } from '../services/socket.service';
 
 @Component({
   selector: 'app-chat',
@@ -17,17 +18,17 @@ export class ChatComponent implements OnInit {
   groupId = "";
   group: Group = { _id: "", name: "", groupAssisUsers: [], users: [] };
 
-  newGroupName: string = "";
+  groupName: string = "";
   messageContent: string = "";
   inputEmail: string = "";
   isGroupAdminOrSuperAdmin: boolean = true;
   isGroupAssis: boolean = true;
 
   messages: Message[] = [];
-  newChannels: Channel[] = [];
-  newCurrentChannel = "";
+  channels: Channel[] = [];
+  currentChannel = "";
 
-  constructor(private route: ActivatedRoute, private router: Router, private dataService: DataService) {
+  constructor(private route: ActivatedRoute, private router: Router, private dataService: DataService, private socketService: SocketService) {
     if (localStorage.getItem('isLoggedIn') != 'true') {
       this.router.navigate(['login'])
     }
@@ -37,12 +38,21 @@ export class ChatComponent implements OnInit {
   ngOnInit(): void {
     this.getGroupDetails();
     this.initialiseChannelsForUser();
+    this.initIoConnection();
   }
 
   ngOnDestroy(): void {
-    if (this.newCurrentChannel) {
-      this.newCurrentChannel = "";
+    if (this.currentChannel) {
+      this.currentChannel = "";
     }
+  }
+
+  private initIoConnection() {
+    this.socketService.initSocket();
+    this.socketService.getMessage((message: any) => {
+      console.log(message)
+      this.messages.push({_id: "", user_id: "test", message: message});
+    })
   }
 
   getGroupDetails() {
@@ -71,34 +81,32 @@ export class ChatComponent implements OnInit {
 
   getAllChannels() {
     this.dataService.getAllChannelsInGroup({ group_id: this.groupId }).subscribe((res: any) => {
-      console.log(res.channels)
-      this.newChannels = res.channels;
+      this.channels = res.channels;
     })
   }
 
   getUserChannels() {
     this.dataService.getAllUserChannelsInGroup({ group_id: this.groupId, user_id: localStorage.getItem('userId') }).subscribe((res: any) => {
-      this.newChannels = res.channels;
+      this.channels = res.channels;
     })
   }
 
   joinChannel(_id: string) {
-    if (this.newCurrentChannel == _id) {
+    if (this.currentChannel == _id) {
       this.messages = [];
-      this.newCurrentChannel = "";
+      this.currentChannel = "";
     } else {
       this.dataService.getMessageHistory({ channel_id: _id }).subscribe((res: any) => {
-        console.log(res.channel)
         this.messages = res.channel.messages;
-        this.newCurrentChannel = res.channel._id;
+        this.currentChannel = res.channel._id;
       })
     }
   }
 
   addNewChannel() {
-    if(this.newGroupName) {
-      this.dataService.addNewChannel({ group_id: this.groupId, name: this.newGroupName }).subscribe((res: any) => {
-        this.newGroupName = ""
+    if(this.groupName) {
+      this.dataService.addNewChannel({ group_id: this.groupId, name: this.groupName }).subscribe((res: any) => {
+        this.groupName = ""
         this.ngOnInit();
       })
     }
@@ -119,12 +127,12 @@ export class ChatComponent implements OnInit {
   }
 
   addUserToSelectedChannel() {
-    if (this.newCurrentChannel) {
-      this.dataService.addUserToChannel({ channel_id: this.newCurrentChannel, email: this.inputEmail }).subscribe((res: any) => {
+    if (this.currentChannel) {
+      this.dataService.addUserToChannel({ channel_id: this.currentChannel, email: this.inputEmail }).subscribe((res: any) => {
           if(res.success) {
             this.ngOnInit();
           } else {
-            console.log(res.error)
+            alert(res.error)
           }
       })      
     }
@@ -159,12 +167,14 @@ export class ChatComponent implements OnInit {
     })
   }
 
-  addNewMessage() {
-    // if (this.currentChannel) {
-    //   this.currentChannel.messageHistory.push(this.messageContent);
-    //   this.updateStorage();
-    //   this.messageContent = "";
-    // }
+  sendMessage() {
+    if(this.messageContent) {
+      // Check if there is a message to send
+      this.socketService.sendMessage(this.messageContent);
+      this.messageContent = "";
+    } else {
+      console.log("No message")
+    }
   }
 
 }

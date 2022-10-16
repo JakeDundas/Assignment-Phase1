@@ -10,11 +10,11 @@
           <div class="col-md-6 col-lg-5 col-xl-4 mb-4 mb-md-0">
             <div class="overflow-auto" style="position: relative; height: 600px;">
               <h4>Channels</h4>
-              <ng-container *ngIf="newChannels">
-                <div *ngFor="let channel of newChannels"> 
+              <ng-container *ngIf="channels">
+                <div *ngFor="let channel of channels"> 
                   <div class="d-flex justify-content-between">
                     <div>
-                      <div *ngIf="channel._id == newCurrentChannel; else elseBlock">                      
+                      <div *ngIf="channel._id == currentChannel; else elseBlock">                      
                         <button type="button" (click)="joinChannel(channel._id)" class="btn btn-primary btn-lg m-2">{{ channel.name }}</button>
                       </div>
                       <ng-template #elseBlock>                      
@@ -23,7 +23,7 @@
                     </div>
                     <button *ngIf="isGroupAdminOrSuperAdmin || isGroupAssis" type="button" class="btn btn-outline-danger btn-sm my-3" (click)="deleteChannel(channel._id)" onclick="return confirm('Are you sure?')">Delete</button>
                   </div>
-                  <div *ngIf="channel._id == newCurrentChannel">
+                  <div *ngIf="channel._id == currentChannel">
                     <div class="d-flex" *ngFor="let user of channel.users"> 
                       <p>{{user}}</p>
                       <button *ngIf="isGroupAdminOrSuperAdmin" type="button" (click)="removeUserFromChannel(channel._id, user)" class="btn btn-outline-danger btn-sm m-1">Remove</button>
@@ -36,7 +36,7 @@
 
             <form>
               <div class="input-group">
-                <input type="text" class="form-control" placeholder="New channel name..." [(ngModel)]="newGroupName" id="newChannelName" name="newChannelName" aria-label="Default" aria-describedby="basic-addon2" required>
+                <input type="text" class="form-control" placeholder="New channel name..." [(ngModel)]="groupName" id="newChannelName" name="newChannelName" aria-label="Default" aria-describedby="basic-addon2" required>
                 <div class="input-group-append">
                   <button *ngIf="isGroupAdminOrSuperAdmin || isGroupAssis" class="btn btn-primary mx-2" (click)="addNewChannel()">New Channel</button>
                 </div>
@@ -55,7 +55,7 @@
               <div class="input-group pt-4">
                 <input type="text" class="form-control" placeholder="Enter message..." [(ngModel)]="messageContent" id="messageContent" name="messageContent" aria-label="Default" aria-describedby="basic-addon2" required>
                 <div class="input-group-append">
-                  <button class="btn btn-primary" type="submit" (click)="addNewMessage()">Send</button>
+                  <button class="btn btn-primary" type="submit" (click)="sendMessage()">Send</button>
                 </div>
               </div>
             </form>
