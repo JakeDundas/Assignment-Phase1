@@ -23,10 +23,12 @@ export class ChatComponent implements OnInit {
   inputEmail: string = "";
   isGroupAdminOrSuperAdmin: boolean = true;
   isGroupAssis: boolean = true;
-
+  currentUserId: string = ""
   messages: Message[] = [];
   channels: Channel[] = [];
   currentChannel = "";
+
+  public isCollapsed = false;
 
   constructor(private route: ActivatedRoute, private router: Router, private dataService: DataService, private socketService: SocketService) {
     if (localStorage.getItem('isLoggedIn') != 'true') {
@@ -36,6 +38,7 @@ export class ChatComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.currentUserId = localStorage.getItem('userId') ?? ""
     this.getGroupDetails();
     this.initialiseChannelsForUser();
     this.initIoConnection();
@@ -49,9 +52,19 @@ export class ChatComponent implements OnInit {
 
   private initIoConnection() {
     this.socketService.initSocket();
+    
     this.socketService.getMessage((message: any) => {
       console.log(message)
       this.messages.push({_id: "", user_id: "test", message: message});
+    })
+
+    this.socketService.getChannelHistory((response: any) => {
+      if(response.success) {
+        response.channel.messages.forEach((message: Message) => this.messages.push(message))
+      } else {
+        console.log(response.error)
+      }
+      console.log(response)
     })
   }
 
@@ -95,10 +108,14 @@ export class ChatComponent implements OnInit {
     if (this.currentChannel == _id) {
       this.messages = [];
       this.currentChannel = "";
+      // leave room
+      this.socketService.leaveChannel(_id);
     } else {
       this.dataService.getMessageHistory({ channel_id: _id }).subscribe((res: any) => {
-        this.messages = res.channel.messages;
+        // this.messages = res.channel.messages;
         this.currentChannel = res.channel._id;
+        this.socketService.joinChannel(_id);
+        this.reqChannelMessageHistory();
       })
     }
   }
@@ -174,6 +191,15 @@ export class ChatComponent implements OnInit {
       this.messageContent = "";
     } else {
       console.log("No message")
+    }
+  }
+
+  reqChannelMessageHistory() {
+    if(this.currentChannel) {
+      // Check if there is a message to send
+      this.socketService.requestChannelHistory(this.currentChannel);
+    } else {
+      console.log("No channel selected")
     }
   }
 

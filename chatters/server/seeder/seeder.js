@@ -67,7 +67,7 @@ async function run() {
                 const _id = new ObjectId()
                 const message = { 
                     _id,
-                    user_id: usersIds[0],
+                    user_id: usersIds[Math.floor(Math.random() * usersIds.length)],
                     message: faker.lorem.sentence()
                 }
                 channelMessages.push(message)

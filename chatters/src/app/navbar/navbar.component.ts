@@ -28,7 +28,7 @@ export class NavbarComponent implements OnInit {
       localStorage.setItem('isLoggedIn', "false")
       localStorage.removeItem("userId");
       localStorage.removeItem("username");
-      localStorage.removeItem("role");
+      this.navbarUpdaterService.currentUserRole = ""
       this.router.navigate(['login'])
     }
   }

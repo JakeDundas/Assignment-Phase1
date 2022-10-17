@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DefaultEventsMap } from '@socket.io/component-emitter';
 import io, { Socket } from 'socket.io-client';
+import { Channel } from '../shared/channel.model';
 
 const SERVER_URL = 'http://localhost:3000/chat';
 
@@ -17,18 +18,26 @@ export class SocketService {
     this.socket = io(SERVER_URL);
   }
 
-  joinRoom(selectedRoom: any): void {
-    this.socket.emit("joinRoom", selectedRoom)
+  joinChannel(channel_id: string): void {
+    this.socket.emit("joinChannel", channel_id)
   }
   
-  leaveRoom(selectedRoom: any): void {
-    this.socket.emit("leaveRoom", selectedRoom)
+  leaveChannel(channel_id: string): void {
+    this.socket.emit("leaveChannel", channel_id)
   }
 
+  requestChannelHistory(channel_id: string): void {
+    this.socket.emit("channelHistory", channel_id)
+  }
+
+  getChannelHistory(next: any): void {
+    this.socket.on("channelHistory", (messageHistory: any) => next(messageHistory))
+  }
+  
   joined(next: any) {
     this.socket.on('joined', (response: any) => next(response))
   }
- 
+
   createRoom(newRoom: any) {
     this.socket.emit('newRoom', newRoom)
   }
