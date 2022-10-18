@@ -1,0 +1,46 @@
+<div class="container-fluid" style="height: 88vh;">
+  <div class="row" style="height: inherit;">
+    <div *ngIf="isGroupAdminOrSuperAdmin" class="col col-lg-3 border-end" style="height: inherit;">
+        <div class="container-fluid ">
+              <form class="bg-dark">
+                <div class="mb-3">
+                    <label for="exampleInputEmail1" class="form-label text-white">Create a new group:</label>
+                    <div class="input-group my-2">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-sizing-default">Group Name</span>
+                        </div>
+                        <input type="text" class="form-control" [(ngModel)]="groupName" id="groupName" name="groupName" placeholder="Default" aria-label="Default" aria-describedby="basic-addon2" required>
+                    </div>
+                    <div class="py-2">
+                        <button class="btn btn-primary" type="submit" (click)="addNewGroup()">Create</button>
+                    </div>
+                </div>
+
+              </form>
+        </div>
+    </div>
+    <div class="col text-center" style="height: inherit;">
+        <h5 class="text-white">Groups</h5>
+        <div class="d-flex container-fluid text-center" style="height: inherit;">
+            <div class="d-flex flex-wrap justify-content-center overflow-auto" style="position: relative; height: inherit;">
+                <!-- if group admin or super admin { show all }-->
+                <!-- else { show groups that you are added to }-->
+                <ng-container *ngIf="groupsList">
+                    <div *ngFor="let group of groupsList">
+                        <!-- <button class="btn btn-primary btn-lg m-2" (click)="navigateToChat(group._id)">{{ group.name }}</button> -->
+                        <div class="card m-3 bg-light" (click)="navigateToChat(group._id)" style="width: 18rem;">
+                            <img class="card-img-top" src="assets/images/house.png" alt="Card image cap">
+                            <div class="card-body">
+                              <p class="card-text">{{ group.name }}</p>
+                            </div>
+                            <div class="mb-2">
+                                <a class="btn btn-primary">Chat</a>
+                            </div>
+                          </div>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+  </div>
+</div>
