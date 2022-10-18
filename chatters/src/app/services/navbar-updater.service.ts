@@ -18,4 +18,16 @@ export class NavbarUpdaterService {
     return localStorage.getItem('role');
   }
 
+  loggedInValue = new BehaviorSubject(this.isLoggedIn);
+
+  set isLoggedIn(value) {
+    value = String(value)
+    this.loggedInValue.next(value); // broadcast change to subscribers
+    localStorage.setItem('isLoggedIn', value);
+  }
+ 
+  get isLoggedIn() {
+    return localStorage.getItem('isLoggedIn');
+  }
+
 }
