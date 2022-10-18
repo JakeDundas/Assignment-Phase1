@@ -45,7 +45,7 @@ async function run() {
         }
         
         //groups
-        for(i=0; i<1; i++) {
+        for(i=0; i<40; i++) {
             const _id = new ObjectId()
             const group = { 
                 _id,

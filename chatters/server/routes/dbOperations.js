@@ -372,7 +372,7 @@ module.exports = {
           const options = { projection: { messages: 1 } };
           const query = { _id }
           const result = await channels.findOne(query, options);
-          console.log(result)
+          console.log("getMessageHistory()", result)
           if (!result) {
             resolve({success: false, error: "No channels found"})
           } else {
@@ -386,28 +386,30 @@ module.exports = {
     })
   },
 
-  addMessageToChannel: (req, res) => {
-    if (!req.body) {
-      return res.sendStatus(400);
-    }
-    const _id = ObjectId(req.body.group_id);
-    const user_id = ObjectId(req.body.user_id);
-    
-    const client = new MongoClient(uri);
-    async function run() {
-      try {
-        const database = client.db("chatters");
-        const groups = database.collection("groups");
-        const query = { _id };
-        const update = { $push: { groupAssisUsers: user_id } };
-        const doc = await groups.updateOne(query, update);
-        console.log(doc)
-        res.send(doc);
-      } finally {
-        await client.close();
+  addMessageToChannel: (channel_message) => {
+    return new Promise( (resolve, reject) => {
+      const _id = ObjectId(channel_message.channel_id);
+      const user_id = ObjectId(channel_message.user_id);
+      const message_id = new ObjectId();
+      const client = new MongoClient(uri);
+      async function run() {
+        try {
+          const database = client.db("chatters");
+          const channels = database.collection("channels");
+          const query = { _id };
+          const update = { $push: { messages: {_id: message_id, user_id, message: channel_message.message} } };
+          const result = await channels.updateOne(query, update);
+          if (result.modifiedCount === 0) {
+            resolve({success: false, error: "Message not sent"})
+          } else {
+            resolve({success: true, message: {_id: message_id, user_id, message: channel_message.message}})
+          }
+        } finally {
+          await client.close();
+        }
       }
-    }
-    run().catch(console.dir);
+      run().catch(console.dir);
+    })
   },
 
   addNewChannel: (req, res) => {

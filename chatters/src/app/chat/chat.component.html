@@ -8,39 +8,71 @@
       <div class="card-body">
         <div class="row">
           <div class="col-md-6 col-lg-5 col-xl-4 mb-4 mb-md-0">
-            <div class="overflow-auto" style="position: relative; height: 600px;">
-              <!-- <h4>Channels</h4> -->
-              <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-                Channels
-              </button>
-              
-              <div class="collapse" id="collapseExample">
-                <div class="card card-body">
-                  Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+            <div class="overflow-auto" style="position: relative; height: 700px;">
+              <div class="my-2">
+                <div class="d-grid gap-2">
+                  <button type="button" class="btn btn-outline-primary" (click)="channelsIsCollapsed = !channelsIsCollapsed" [attr.aria-expanded]="!channelsIsCollapsed" aria-controls="channelsCollapse">
+                    Channels
+                  </button>
                 </div>
-
-                <!-- <ng-container *ngIf="channels">
-                  <div *ngFor="let channel of channels"> 
-                    <div class="d-flex justify-content-between">
-                      <div>
-                        <div *ngIf="channel._id == currentChannel; else elseBlock">                      
-                          <button type="button" (click)="joinChannel(channel._id)" class="btn btn-primary btn-lg m-2">{{ channel.name }}</button>
+                <div id="channelsCollapse" [ngbCollapse]="channelsIsCollapsed">
+                  <ng-container *ngIf="channels">
+                    <div *ngFor="let channel of channels"> 
+                      <div class="d-flex justify-content-between">
+                        <div>
+                          <div *ngIf="channel._id == currentChannel; else elseBlock">                      
+                            <button type="button" (click)="joinChannel(channel._id)" class="btn btn-primary btn-sm m-2">{{ channel.name }}</button>
+                          </div>
+                          <ng-template #elseBlock>                      
+                            <button type="button" (click)="joinChannel(channel._id)" class="btn btn-secondary btn-sm m-2">{{ channel.name }}</button>
+                          </ng-template>
                         </div>
-                        <ng-template #elseBlock>                      
-                          <button type="button" (click)="joinChannel(channel._id)" class="btn btn-secondary btn-lg m-2">{{ channel.name }}</button>
-                        </ng-template>
+                        <button *ngIf="isGroupAdminOrSuperAdmin || isGroupAssis" type="button" class="btn btn-outline-danger btn-sm my-3" (click)="deleteChannel(channel._id)" onclick="return confirm('Are you sure?')">Delete</button>
                       </div>
-                      <button *ngIf="isGroupAdminOrSuperAdmin || isGroupAssis" type="button" class="btn btn-outline-danger btn-sm my-3" (click)="deleteChannel(channel._id)" onclick="return confirm('Are you sure?')">Delete</button>
-                    </div>
-                    <div *ngIf="channel._id == currentChannel">
-                      <div class="d-flex" *ngFor="let user of channel.users"> 
-                        <p>{{user}}</p>
-                        <button *ngIf="isGroupAdminOrSuperAdmin" type="button" (click)="removeUserFromChannel(channel._id, user)" class="btn btn-outline-danger btn-sm m-1">Remove</button>
+                      <div *ngIf="channel._id == currentChannel">
+                        <div class="d-flex" *ngFor="let user of channel.users"> 
+                          <p>{{user}}</p>
+                          <button *ngIf="isGroupAdminOrSuperAdmin" type="button" (click)="removeUserFromChannel(channel._id, user)" class="btn btn-outline-danger btn-sm m-1">Remove</button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </ng-container> -->
-            </div>
+                  </ng-container>
+                </div>
+              </div>
+
+              <div class="my-2">
+                <div class="d-grid gap-2">
+                  <button type="button" class="btn btn-outline-primary" (click)="membersIsCollapsed = !membersIsCollapsed" [attr.aria-expanded]="!membersIsCollapsed" aria-controls="membersCollapse">
+                    Group Members
+                  </button>
+                </div>
+                <div id="membersCollapse" [ngbCollapse]="membersIsCollapsed">
+                  <ng-container *ngIf="group.users">
+                    <div class="d-flex" *ngFor="let user of group.users"> 
+                      <p class="mr-auto">{{user}}</p>
+                      <div>
+                        <button *ngIf="isGroupAdminOrSuperAdmin" type="button" (click)="promoteToGroupAssis(user)" class="btn btn-outline-info btn-sm m-1">+</button>
+                        <button *ngIf="isGroupAdminOrSuperAdmin" type="button" (click)="removeUserFromGroup(user)" class="btn btn-outline-danger btn-sm m-1">X</button>
+                      </div>
+                    </div>
+                  </ng-container>
+                </div>
+              </div>
+
+              <div class="my-2">
+                <div class="d-grid gap-2">
+                  <button type="button" class="btn btn-outline-primary" (click)="assisIsCollapsed = !assisIsCollapsed" [attr.aria-expanded]="!assisIsCollapsed" aria-controls="assisCollapse">
+                    Group Assistants
+                  </button>
+                </div>
+                <div id="assisCollapse" [ngbCollapse]="assisIsCollapsed">
+                  <ng-container *ngIf="group.groupAssisUsers">
+                    <div *ngFor="let user of group.groupAssisUsers"> 
+                      <p class="mt-3 mx-5">{{user}}</p>
+                    </div>
+                  </ng-container>
+                </div>
+              </div>
 
             </div>
             <hr>
@@ -56,7 +88,7 @@
           </div>
 
           <div class="col-md-6 col-lg-7 col-xl-8">
-            <div class="overflow-auto" style="position: relative; height: 600px;">
+            <div class="overflow-auto" style="position: relative; height: 700px;" #messagesScroll>
               <div *ngFor="let message of messages"> 
                 <div class="d-flex justify-content-end" *ngIf="message.user_id == currentUserId; else elseBlock">                      
                   <div>
@@ -85,6 +117,7 @@
     </div>
   </div>
 </div>
+
 <form>
   <div *ngIf="isGroupAdminOrSuperAdmin || isGroupAssis" class="input-group pt-4">
     <input type="text" class="form-control" placeholder="Enter email..." [(ngModel)]="inputEmail" id="inputEmail" name="inputEmail" aria-label="Default" aria-describedby="basic-addon2" required>
@@ -94,39 +127,3 @@
     </div>
   </div>
 </form>
-<div class="d-flex justify-content-around">
-  <div>
-    <h3>Group Members</h3>
-    <ng-container *ngIf="group.users">
-      <div class="d-flex flex-row align-items-center" *ngFor="let user of group.users"> 
-        <p class="mt-2 mx-5">{{user}}</p>
-        <button *ngIf="isGroupAdminOrSuperAdmin" type="button" (click)="promoteToGroupAssis(user)" class="btn btn-outline-info btn-sm m-1">Promote to Group Assis</button>
-        <button *ngIf="isGroupAdminOrSuperAdmin" type="button" (click)="removeUserFromGroup(user)" class="btn btn-outline-danger btn-sm m-1">Remove</button>
-      </div>
-    </ng-container>
-  </div>
-  <div>
-    <h3>Group Assis</h3>
-    <ng-container *ngIf="group.groupAssisUsers">
-      <div *ngFor="let user of group.groupAssisUsers"> 
-        <p class="mt-3 mx-5">{{user}}</p>
-      </div>
-    </ng-container>
-  </div>
-
-</div>
-
-<p>
-  <button type="button" class="btn btn-outline-primary" (click)="isCollapsed = !isCollapsed"
-          [attr.aria-expanded]="!isCollapsed" aria-controls="collapseExample">
-    Collapse Toggle
-  </button>
-</p>
-<div id="collapseExample" [ngbCollapse]="isCollapsed">
-  <div class="card">
-    <div class="card-body">
-      You can collapse this card by clicking Toggle Button. This is example from ItSolutionStuff.com.
-    </div>
-  </div>
-</div>
-

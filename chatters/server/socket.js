@@ -16,14 +16,13 @@ module.exports = {
       // socket.on('message', (message) => {
       //     chat.emit('message', message);
       // })
-      socket.on("message", (message) => {
-        console.log(message)
+      socket.on("message", async (channel_message) => {
+        const result = await dbOperations.addMessageToChannel(channel_message)
         for (i=0; i < socketRoom.length; i++) {
             if (socketRoom[i][0] == socket.id) {
-                chat.to(socketRoom[i][1]).emit('message', message)
+                chat.to(socketRoom[i][1]).emit('message', result)
             }
         }
-        // chat.emit("message", message);
       });
 
       socket.on("joinChannel", (channel_id) => {

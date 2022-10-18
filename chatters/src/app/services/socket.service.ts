@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { DefaultEventsMap } from '@socket.io/component-emitter';
 import io, { Socket } from 'socket.io-client';
 import { Channel } from '../shared/channel.model';
+import { Message } from '../shared/message.model';
 
 const SERVER_URL = 'http://localhost:3000/chat';
 
@@ -18,12 +19,12 @@ export class SocketService {
     this.socket = io(SERVER_URL);
   }
 
-  joinChannel(channel_id: string): void {
-    this.socket.emit("joinChannel", channel_id)
+  joinChannel(joinRequest: {channel_id: string, user_id: string}): void {
+    this.socket.emit("joinChannel", joinRequest)
   }
   
-  leaveChannel(channel_id: string): void {
-    this.socket.emit("leaveChannel", channel_id)
+  leaveChannel(leaveRequest: {channel_id: string, user_id: string}): void {
+    this.socket.emit("leaveChannel", leaveRequest)
   }
 
   requestChannelHistory(channel_id: string): void {
@@ -62,8 +63,8 @@ export class SocketService {
     this.socket.on('notice', (response: any) => next(response))
   }
 
-  sendMessage(message: string) {
-    this.socket.emit('message', message)
+  sendMessage(channel_message: {channel_id: string, user_id: string, message: string}) {
+    this.socket.emit('message', channel_message)
   }
 
   getMessage(next: any) {

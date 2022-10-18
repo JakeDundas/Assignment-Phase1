@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -15,6 +15,9 @@ import { SocketService } from '../services/socket.service';
   styleUrls: ['./chat.component.css']
 })
 export class ChatComponent implements OnInit {
+  @ViewChild('messagesScroll')
+  messagesScroll!: ElementRef;
+
   groupId = "";
   group: Group = { _id: "", name: "", groupAssisUsers: [], users: [] };
 
@@ -28,7 +31,9 @@ export class ChatComponent implements OnInit {
   channels: Channel[] = [];
   currentChannel = "";
 
-  public isCollapsed = false;
+  channelsIsCollapsed = true;
+  membersIsCollapsed = true;
+  assisIsCollapsed = true;
 
   constructor(private route: ActivatedRoute, private router: Router, private dataService: DataService, private socketService: SocketService) {
     if (localStorage.getItem('isLoggedIn') != 'true') {
@@ -53,9 +58,13 @@ export class ChatComponent implements OnInit {
   private initIoConnection() {
     this.socketService.initSocket();
     
-    this.socketService.getMessage((message: any) => {
-      console.log(message)
-      this.messages.push({_id: "", user_id: "test", message: message});
+    this.socketService.getMessage((response: any) => {
+      if(response.success) {
+        this.messages.push(response.message);
+        this.messagesScroll.nativeElement.scrollTop = this.messagesScroll.nativeElement.scrollHeight;
+      } else {
+        console.log(response.error)
+      }
     })
 
     this.socketService.getChannelHistory((response: any) => {
@@ -185,9 +194,9 @@ export class ChatComponent implements OnInit {
   }
 
   sendMessage() {
-    if(this.messageContent) {
+    if(this.messageContent && this.currentChannel) {
       // Check if there is a message to send
-      this.socketService.sendMessage(this.messageContent);
+      this.socketService.sendMessage({channel_id: this.currentChannel, user_id: this.currentUserId, message: this.messageContent});
       this.messageContent = "";
     } else {
       console.log("No message")

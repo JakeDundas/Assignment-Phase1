@@ -25,7 +25,7 @@ export class LoginComponent implements OnInit {
         return;
       }
       const validUser = res.user
-      localStorage.setItem('isLoggedIn', "true")
+      this.navbarUpdaterService.isLoggedIn = "true"
       localStorage.setItem('userId', validUser._id)
       localStorage.setItem('username', validUser.username)
       this.navbarUpdaterService.currentUserRole = validUser.role
