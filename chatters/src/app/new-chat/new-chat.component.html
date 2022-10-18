@@ -1,0 +1,141 @@
+<div class="container-fluid" style="height: 87vh;">
+  <div class="row" style="height: inherit;">
+    <div  class="col col-lg-3 border-end" style="height: inherit;">
+        <div class="container-fluid" style="height: inherit;">
+          <div class="overflow-auto" style="position: relative; height: inherit;">
+            <div class="my-2">
+              <div class="d-grid gap-3">
+                <button type="button" class="btn btn-secondary" (click)="channelsIsCollapsed = !channelsIsCollapsed" [attr.aria-expanded]="!channelsIsCollapsed" aria-controls="channelsCollapse">
+                  <div class="d-flex justify-content-between">
+                    <div>Channels</div>
+                    <div *ngIf="channelsIsCollapsed"> > </div>
+                    <div *ngIf="!channelsIsCollapsed"> ∨ </div>
+                  </div>
+                </button>
+              </div>
+              <div id="channelsCollapse" [ngbCollapse]="channelsIsCollapsed">
+                <form *ngIf="isGroupAdminOrSuperAdmin || isGroupAssis" class="m-2">
+                  <div class="input-group">
+                    <input type="text" class="form-control" placeholder="New channel name..." [(ngModel)]="groupName" id="newChannelName" name="newChannelName" aria-label="Default" aria-describedby="basic-addon2" required>
+                    <div class="input-group-append">
+                      <button class="btn btn-success" (click)="addNewChannel()">Add Channel</button>
+                    </div>
+                  </div>
+                </form>
+                <ng-container *ngIf="channels">
+                  <div *ngFor="let channel of channels"> 
+                    <div class="d-flex justify-content-between">
+                      <div>
+                        <div *ngIf="channel._id == currentChannel; else elseBlock">                      
+                          <button type="button" (click)="joinChannel(channel._id)" class="btn btn-primary btn-sm m-2">{{ channel.name }}</button>
+                        </div>
+                        <ng-template #elseBlock>                      
+                          <button type="button" (click)="joinChannel(channel._id)" class="btn btn-secondary btn-sm m-2">{{ channel.name }}</button>
+                        </ng-template>
+                      </div>
+                      <form *ngIf="channel._id == currentChannel && (isGroupAdminOrSuperAdmin || isGroupAssis)" class="m-2">
+                        <div class="input-group">
+                          <input type="text" class="form-control-sm" placeholder="Enter email..." [(ngModel)]="inputEmail" id="inputEmail" name="inputEmail" aria-label="Default" aria-describedby="basic-addon2" required>
+                          <div class="input-group-append">
+                            <button *ngIf="isGroupAdminOrSuperAdmin" class="btn btn-success btn-sm" type="submit" (click)="addUserToGroup()">Add to Channel</button>
+                          </div>
+                        </div>
+                      </form>
+                      <button *ngIf="isGroupAdminOrSuperAdmin || isGroupAssis" type="button" class="btn btn-outline-danger btn-sm my-3" (click)="deleteChannel(channel._id)">Delete</button>
+                    </div>
+                    <div *ngIf="channel._id == currentChannel">
+                      <div class="d-flex text-white" *ngFor="let user of channel.users"> 
+                        <p>{{user}}</p>
+                        <button *ngIf="isGroupAdminOrSuperAdmin || isGroupAssis" type="button" (click)="removeUserFromChannel(channel._id, user)" class="btn btn-outline-danger btn-sm m-1">Remove</button>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+            
+
+            <div class="my-2">
+              <div class="d-grid gap-3">
+                <button type="button" class="btn btn-secondary" (click)="membersIsCollapsed = !membersIsCollapsed" [attr.aria-expanded]="!membersIsCollapsed" aria-controls="membersCollapse">
+                  <div class="d-flex justify-content-between">
+                    <div>Group Members</div>
+                    <div *ngIf="membersIsCollapsed"> > </div>
+                    <div *ngIf="!membersIsCollapsed"> ∨ </div>
+                  </div>
+                </button>
+              </div>
+              <div id="membersCollapse" [ngbCollapse]="membersIsCollapsed">
+                <form *ngIf="isGroupAdminOrSuperAdmin || isGroupAssis" class="m-2">
+                  <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Enter email..." [(ngModel)]="inputEmail" id="inputEmail" name="inputEmail" aria-label="Default" aria-describedby="basic-addon2" required>
+                    <div class="input-group-append">
+                      <button *ngIf="isGroupAdminOrSuperAdmin" class="btn btn-success" type="submit" (click)="addUserToGroup()">Add to Group</button>
+                    </div>
+                  </div>
+                </form>
+                <ng-container *ngIf="group.users">
+                  <div class="d-flex m-2" *ngFor="let user of group.users"> 
+                    <p class="mr-auto text-white m-2">{{user}}</p>
+                    <div>
+                      <button *ngIf="isGroupAdminOrSuperAdmin" type="button" (click)="promoteToGroupAssis(user)" class="btn btn-outline-info btn-sm m-1">+</button>
+                      <button *ngIf="isGroupAdminOrSuperAdmin" type="button" (click)="removeUserFromGroup(user)" class="btn btn-outline-danger btn-sm m-1">X</button>
+                    </div>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+
+            <div class="my-2">
+              <div class="d-grid gap-3">
+                <button type="button" class="btn btn-secondary" (click)="assisIsCollapsed = !assisIsCollapsed" [attr.aria-expanded]="!assisIsCollapsed" aria-controls="assisCollapse">
+                  <div class="d-flex justify-content-between">
+                    <div>Group Assistants</div>
+                    <div *ngIf="assisIsCollapsed"> > </div>
+                    <div *ngIf="!assisIsCollapsed"> ∨ </div>
+                  </div>
+                </button>
+              </div>
+              <div id="assisCollapse" [ngbCollapse]="assisIsCollapsed">
+                <form *ngIf="isGroupAdminOrSuperAdmin" class="m-2">
+                  <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Enter email..." [(ngModel)]="inputEmail" id="inputEmail" name="inputEmail" aria-label="Default" aria-describedby="basic-addon2" required>
+                    <div class="input-group-append">
+                      <button class="btn btn-success" type="submit" (click)="addUserToSelectedChannel()">Add to Channel</button>
+                    </div>
+                  </div>
+                </form>
+                <ng-container *ngIf="group.groupAssisUsers">
+                  <div *ngFor="let user of group.groupAssisUsers"> 
+                    <p class="text-white m-2">{{user}}</p>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+
+          </div>
+        </div>
+    </div>
+    <div class="col" style="height: inherit;">
+      <div class="d-flex justify-content-between">
+        <h3 class="text-white">{{group.name}}</h3>
+        <button *ngIf="isGroupAdminOrSuperAdmin" type="button" (click)="deleteGroup()" class="btn btn-outline-danger btn-sm my-3">Delete Group</button>
+      </div>
+        <div class="container-fluid overflow-auto" style="height: inherit;">
+            <div *ngFor="let message of messages"> 
+              <div class="d-flex justify-content-end" *ngIf="message.user_id == currentUserId; else elseBlock">                      
+                <div>
+                  <p class="small p-2 me-3 mb-1 text-white rounded-3 bg-secondary">{{ message.user_id }}<br>{{ message.message }}</p>
+                </div>
+              </div>
+              <br>
+              <ng-template #elseBlock>                      
+                <div class="d-flex justify-content-start">
+                  <p class="small p-2 me-3 mb-1 rounded-3 bg-light">{{ message.user_id }}<br>{{ message.message }}</p>
+                </div>
+              </ng-template>
+            </div>
+        </div>
+    </div>
+  </div>
+</div>
