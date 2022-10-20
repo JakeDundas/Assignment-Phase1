@@ -1,0 +1,22 @@
+<div class="container-fluid" style="height: 87vh;">
+    <div class="row justify-content-center align-items-center">
+        <div class="col-4">
+            <div class="d-flex justify-content-center">
+                <form class="bg-dark">
+                    <img src="http:\\localhost:3000\images\{{profileImage}}" style="width: 400px; clip-path: circle( 35% at 50% 50%)">
+                        <div class="d-flex justify-content-center py-2">
+                            <div class="input-group my-3">
+                                <input class="form-control form-control-sm" (change)="onFileSelected($event)" id="uploadFile" name="uploadFile" type="file">
+                                <button class="btn btn-success btn-sm" type="submit" (click)="onUpload()">Upload Profile Picture</button>
+                              </div>
+                        </div>
+                  </form>
+            </div>
+            <div class="text-center mt-5">
+              <p class="text-white">{{username}}</p>
+              <p class="text-white">{{email}}</p>
+              <p class="text-white">{{role}}</p>
+            </div>   
+        </div>
+      </div>
+</div>
