@@ -87,10 +87,23 @@ export class DataService {
   }
 
   // Users
-  // Get all groups
+  // Get all users
   getAllUsers() {
     return this.httpClient.get<any>(this.uri + 'api/getAllUsers');
   }
 
+  // Get a user
+  getUser(user: {user_id: string}) {
+    return this.httpClient.post<any>(this.uri + 'api/getUser', user);
+  }
 
+  // Get a user
+  updateUserProfileImage(user: {user_id: string, imageName: string}) {
+    return this.httpClient.post<any>(this.uri + 'api/updateUserProfileImage', user);
+  }
+  
+  // getUsersDetails
+  getUsersDetails( users: string[] ) {
+    return this.httpClient.post<any>(this.uri + 'api/getUsersDetails', users);
+  }
 }

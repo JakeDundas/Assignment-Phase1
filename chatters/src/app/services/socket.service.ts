@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { DefaultEventsMap } from '@socket.io/component-emitter';
 import io, { Socket } from 'socket.io-client';
-import { Channel } from '../shared/channel.model';
-import { Message } from '../shared/message.model';
 
 const SERVER_URL = 'http://localhost:3000/chat';
 
@@ -19,12 +17,20 @@ export class SocketService {
     this.socket = io(SERVER_URL);
   }
 
-  joinChannel(joinRequest: {channel_id: string, user_id: string}): void {
+  joinChannel(joinRequest: {channel_id: string, username: string}): void {
     this.socket.emit("joinChannel", joinRequest)
   }
   
-  leaveChannel(leaveRequest: {channel_id: string, user_id: string}): void {
+  joined(next: any) {
+    this.socket.on('joined', (response: any) => next(response))
+  }
+
+  leaveChannel(leaveRequest: {channel_id: string, username: string}): void {
     this.socket.emit("leaveChannel", leaveRequest)
+  }
+
+  hasLeft(next: any) {
+    this.socket.on('hasLeft', (response: any) => next(response))
   }
 
   requestChannelHistory(channel_id: string): void {
@@ -35,10 +41,19 @@ export class SocketService {
     this.socket.on("channelHistory", (messageHistory: any) => next(messageHistory))
   }
   
-  joined(next: any) {
-    this.socket.on('joined', (response: any) => next(response))
+  sendImageMessage(channel_message: {channel_id: string, user_id: string, message: string}) {
+    this.socket.emit('imageMessage', channel_message)
   }
 
+  
+  sendMessage(channel_message: {channel_id: string, user_id: string, message: string}) {
+    this.socket.emit('message', channel_message)
+  }
+  
+  getMessage(next: any) {
+    this.socket.on('message', (message: any) => next(message))
+  }
+ 
   createRoom(newRoom: any) {
     this.socket.emit('newRoom', newRoom)
   }
@@ -61,14 +76,6 @@ export class SocketService {
 
   notice(next: any) {
     this.socket.on('notice', (response: any) => next(response))
-  }
-
-  sendMessage(channel_message: {channel_id: string, user_id: string, message: string}) {
-    this.socket.emit('message', channel_message)
-  }
-
-  getMessage(next: any) {
-    this.socket.on('message', (message: any) => next(message))
   }
 }
 

@@ -1,4 +1,4 @@
-<div class="container-fluid" style="height: 87vh;">
+<div class="container-fluid" style="height: 82vh;">
   <div class="row" style="height: inherit;">
     <div  class="col col-lg-3 border-end" style="height: inherit;">
         <div class="container-fluid" style="height: inherit;">
@@ -44,9 +44,12 @@
                       <button *ngIf="isGroupAdminOrSuperAdmin || isGroupAssis" type="button" class="btn btn-outline-danger btn-sm my-3" (click)="deleteChannel(channel._id)">Delete</button>
                     </div>
                     <div *ngIf="channel._id == currentChannel">
-                      <div class="d-flex text-white" *ngFor="let user of channel.users"> 
-                        <p>{{user}}</p>
-                        <button *ngIf="isGroupAdminOrSuperAdmin || isGroupAssis" type="button" (click)="removeUserFromChannel(channel._id, user)" class="btn btn-outline-danger btn-sm m-1">Remove</button>
+                      <div class="d-flex align-items-center justify-content-between m-2" *ngFor="let user of channel.users"> 
+                        <div class="d-flex align-items-center">
+                          <img src="http:\\localhost:3000\images\{{user.profileImage}}" style="width: 80px; clip-path: circle( 35% at 50% 50%)">
+                          <p class="text-white">{{user.username}}</p>
+                        </div>  
+                        <button *ngIf="isGroupAdminOrSuperAdmin || isGroupAssis" type="button" (click)="removeUserFromChannel(channel._id, user._id)" class="btn btn-outline-danger btn-sm m-1">Remove</button>
                       </div>
                     </div>
                   </div>
@@ -75,11 +78,14 @@
                   </div>
                 </form>
                 <ng-container *ngIf="group.users">
-                  <div class="d-flex m-2" *ngFor="let user of group.users"> 
-                    <p class="mr-auto text-white m-2">{{user}}</p>
+                  <div class="d-flex align-items-center justify-content-between m-2" *ngFor="let user of group.users"> 
+                    <div class="d-flex align-items-center">
+                      <img src="http:\\localhost:3000\images\{{user.profileImage}}" style="width: 80px; clip-path: circle( 35% at 50% 50%)">
+                      <p class="text-white">{{user.username}}</p>
+                    </div>  
                     <div>
-                      <button *ngIf="isGroupAdminOrSuperAdmin" type="button" (click)="promoteToGroupAssis(user)" class="btn btn-outline-info btn-sm m-1">+</button>
-                      <button *ngIf="isGroupAdminOrSuperAdmin" type="button" (click)="removeUserFromGroup(user)" class="btn btn-outline-danger btn-sm m-1">X</button>
+                      <button *ngIf="isGroupAdminOrSuperAdmin" type="button" (click)="promoteToGroupAssis(user._id)" class="btn btn-outline-info btn-sm m-1">+</button>
+                      <button *ngIf="isGroupAdminOrSuperAdmin" type="button" (click)="removeUserFromGroup(user._id)" class="btn btn-outline-danger btn-sm m-1">X</button>
                     </div>
                   </div>
                 </ng-container>
@@ -123,18 +129,61 @@
       </div>
         <div class="container-fluid overflow-auto" style="height: inherit;">
             <div *ngFor="let message of messages"> 
-              <div class="d-flex justify-content-end" *ngIf="message.user_id == currentUserId; else elseBlock">                      
-                <div>
-                  <p class="small p-2 me-3 mb-1 text-white rounded-3 bg-secondary">{{ message.user_id }}<br>{{ message.message }}</p>
+                <div class="d-flex align-items-end justify-content-end" *ngIf="message.user._id == currentUserId; else elseBlock">                      
+                  <div class="d-flex align-items-end justify-content-end" *ngIf="message.type === 'image'">
+                    <img src="http:\\localhost:3000\images\{{message.message}}" style="max-height: 300px;">
+                    <p class="small p-2 me-3 mb-1 rounded-3 text-light">{{ message.user.username }}</p>
+                  </div>
+                  <div *ngIf="message.type === 'text'">
+                    <p class="small p-2 me-3 mb-1 text-white rounded-3 bg-secondary">{{ message.user.username }}<br>{{ message.message }}</p>
+                  </div>  
+                  <img src="http:\\localhost:3000\images\{{message.user.profileImage}}" style="width: 100px; clip-path: circle( 35% at 50% 50%)">
                 </div>
-              </div>
-              <br>
-              <ng-template #elseBlock>                      
-                <div class="d-flex justify-content-start">
-                  <p class="small p-2 me-3 mb-1 rounded-3 bg-light">{{ message.user_id }}<br>{{ message.message }}</p>
-                </div>
-              </ng-template>
+                <br>
+                <ng-template #elseBlock>                      
+                  <div *ngIf="message._id !== 'joined'" class="d-flex align-items-end justify-content-start">
+                    <div>
+                      <img src="http:\\localhost:3000\images\{{message.user.profileImage}}" style="width: 100px; clip-path: circle( 35% at 50% 50%)">
+                    </div>
+                    <div class="d-flex align-items-end justify-content-start" *ngIf="message.type === 'image'">
+                      <img src="http:\\localhost:3000\images\{{message.message}}" style="max-height: 300px;">
+                      <p class="small p-2 me-3 mb-1 rounded-3 text-light">{{ message.user.username }}</p>
+                    </div>
+                    <div *ngIf="message.type === 'text'">
+                      <p class="small p-2 me-3 mb-1 rounded-3 bg-light">{{ message.user.username }}<br>{{ message.message }}</p>
+                    </div>
+                    <div>
+                    </div>
+                  </div>
+                  <div *ngIf="message._id === 'joined' || message._id === 'hasLeft'" class="d-flex justify-content-start">
+                    <p class="small p-2 me-3 mb-1 rounded-3 text-light">{{ message.message }}</p>
+                  </div>
+                </ng-template>
             </div>
+        </div>
+        <div class="container-fluid">
+          <div class="row align-items-center">
+            <div class="col-10">
+              <form>
+                <div class="input-group">
+                  <input type="text" class="form-control" placeholder="Enter message..." [(ngModel)]="messageContent" id="messageContent" name="messageContent" aria-label="Default" aria-describedby="basic-addon2" required>
+                  <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit" (click)="sendMessage()">Send</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div class="col">
+              <form>
+                <div class="input-group">
+                  <input class="form-control form-control-sm" (change)="onFileSelected($event)" id="uploadFile" name="uploadFile" type="file">
+                  <div class="input-group-append">
+                    <button class="btn btn-sm btn-primary" type="submit" (click)="onUpload()">Send</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
     </div>
   </div>

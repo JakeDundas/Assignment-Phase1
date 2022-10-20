@@ -12,11 +12,11 @@ export class AppComponent {
   constructor(private router: Router) {}
 
   logOut() {
-    if(localStorage.getItem('isLoggedIn') == "true") {
-      localStorage.setItem('isLoggedIn', "false")
-      localStorage.removeItem("userId");
-      localStorage.removeItem("username");
-      localStorage.removeItem("role");
+    if(sessionStorage.getItem('isLoggedIn') == "true") {
+      sessionStorage.setItem('isLoggedIn', "false")
+      sessionStorage.removeItem("userId");
+      sessionStorage.removeItem("username");
+      sessionStorage.removeItem("role");
       this.router.navigate(['login'])
     }
   }
