@@ -27,7 +27,8 @@ async function run() {
             username: 'superAdmin', 
             email: 'super@super.com', 
             password: 'password', 
-            role: 'superAdmin'
+            role: 'superAdmin',
+            profileImage: 'default_profile.png',
         } 
         const result = await users.insertOne(user);
         usersIds.push(_id)
@@ -38,7 +39,8 @@ async function run() {
                 username: faker.internet.userName(), 
                 email: faker.internet.email(), 
                 password: 'password', 
-                role: 'user'
+                role: 'user',
+                profileImage: 'default_profile.png',
             } 
             const result = await users.insertOne(user);
             usersIds.push(_id)
@@ -68,7 +70,8 @@ async function run() {
                 const message = { 
                     _id,
                     user_id: usersIds[Math.floor(Math.random() * usersIds.length)],
-                    message: faker.lorem.sentence()
+                    message: faker.lorem.sentence(),
+                    type: "text",
                 }
                 channelMessages.push(message)
             }

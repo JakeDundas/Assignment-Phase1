@@ -468,13 +468,91 @@ module.exports = {
       try {
         const database = client.db("chatters");
         const users = database.collection("users");
-        const projection = { username: 1, email: 1, role: 1 };
+        const projection = { username: 1, email: 1, role: 1, profileImage: 1 };
         const cursor = await users.find().project(projection).toArray();
         if (!cursor) {
           res.send({ success: false, error: "No users found"})
         } else {
           res.send({ success: true, users: cursor })
         }
+      } finally {
+        await client.close();
+      }
+    }
+    run().catch(console.dir);
+  },
+
+  getUser: (req, res) => {
+    if (!req.body) {
+      return res.sendStatus(400);
+    }
+    const _id = ObjectId(req.body.user_id);
+
+    const client = new MongoClient(uri);
+    async function run() {
+      try {
+        const database = client.db("chatters");
+        const users = database.collection("users");
+        const query = { _id };
+        const options = { projection: {username: 1, email: 1, role: 1, profileImage: 1} };
+        const cursor = await users.findOne(query, options);
+        if (!cursor) {
+          res.send({ success: false, error: "No users found"})
+        } else {
+          res.send({ success: true, user: cursor })
+        }
+      } finally {
+        await client.close();
+      }
+    }
+    run().catch(console.dir);
+  },
+
+  getUsersDetails: (req, res) => {
+    if (!req.body) {
+      return res.sendStatus(400);
+    }
+    const userIdArray = req.body;
+    const userObjectIdArray = userIdArray.map(x => ObjectId(x))
+    console.log(userIdArray, userObjectIdArray) 
+
+    const client = new MongoClient(uri);
+    async function run() {
+      try {
+        const database = client.db("chatters");
+        const users = database.collection("users");
+        const query = { _id: { $in: userObjectIdArray } }
+        const projection = { username: 1, email: 1, role: 1, profileImage: 1 };
+        const cursor = await users.find(query).project(projection).toArray();
+        if (!cursor) {
+          res.send({ success: false, error: "No users found"})
+        } else {
+          res.send({ success: true, users: cursor })
+        }
+      } finally {
+        await client.close();
+      }
+    }
+    run().catch(console.dir);
+  },
+
+  updateUserProfileImage: (req, res) => {
+    if (!req.body) {
+      return res.sendStatus(400);
+    }
+    const _id = ObjectId(req.body.user_id);
+    const imageName = req.body.imageName;
+
+    const client = new MongoClient(uri);
+    async function run() {
+      try {
+        const database = client.db("chatters");
+        const users = database.collection("users");
+        const query = { _id };
+        const update = { $set: {profileImage: imageName} }
+        const doc = await users.updateOne(query, update);
+        console.log(doc)
+        res.send(doc);
       } finally {
         await client.close();
       }
