@@ -35,9 +35,14 @@
                       </div>
                       <form *ngIf="channel._id == currentChannel && (isGroupAdminOrSuperAdmin || isGroupAssis)" class="m-2">
                         <div class="input-group">
-                          <input type="text" class="form-control-sm" placeholder="Enter email..." [(ngModel)]="inputEmail" id="inputEmail" name="inputEmail" aria-label="Default" aria-describedby="basic-addon2" required>
+                          <input class="form-control-sm" [(ngModel)]="groupMemberQuery" (ngModelChange)="updateGroupMemberDataList()" list="groupMemberDatalistOptions" name="datalistOptions" id="exampleDataList" placeholder="Type to search..."><br>
+                          <datalist id="groupMemberDatalistOptions">
+                            <ng-container *ngFor="let user of groupMemberSearch">
+                              <option value={{user.email}}>
+                            </ng-container>
+                          </datalist>
                           <div class="input-group-append">
-                            <button *ngIf="isGroupAdminOrSuperAdmin" class="btn btn-success btn-sm" type="submit" (click)="addUserToGroup()">Add to Channel</button>
+                            <button *ngIf="isGroupAdminOrSuperAdmin" class="btn btn-success btn-sm" type="submit" (click)="addUserToSelectedChannel()">Add</button>
                           </div>
                         </div>
                       </form>
@@ -71,7 +76,12 @@
               <div id="membersCollapse" [ngbCollapse]="membersIsCollapsed">
                 <form *ngIf="isGroupAdminOrSuperAdmin || isGroupAssis" class="m-2">
                   <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Enter email..." [(ngModel)]="inputEmail" id="inputEmail" name="inputEmail" aria-label="Default" aria-describedby="basic-addon2" required>
+                    <input class="form-control" [(ngModel)]="userQuery" (ngModelChange)="updateUserDataList()" list="userDatalistOptions" name="datalistOptions" id="exampleDataList" placeholder="Type to search..."><br>
+                    <datalist id="userDatalistOptions">
+                      <ng-container *ngFor="let user of userSearch">
+                        <option value={{user.email}}>
+                      </ng-container>
+                    </datalist>
                     <div class="input-group-append">
                       <button *ngIf="isGroupAdminOrSuperAdmin" class="btn btn-success" type="submit" (click)="addUserToGroup()">Add to Group</button>
                     </div>
@@ -86,6 +96,7 @@
                     <div>
                       <button *ngIf="isGroupAdminOrSuperAdmin" type="button" (click)="promoteToGroupAssis(user._id)" class="btn btn-outline-info btn-sm m-1">+</button>
                       <button *ngIf="isGroupAdminOrSuperAdmin" type="button" (click)="removeUserFromGroup(user._id)" class="btn btn-outline-danger btn-sm m-1">X</button>
+                      <button type="button" (click)="videoChatUser(user._id)" class="btn btn-outline-danger btn-sm m-1">Vid</button>
                     </div>
                   </div>
                 </ng-container>
@@ -103,22 +114,15 @@
                 </button>
               </div>
               <div id="assisCollapse" [ngbCollapse]="assisIsCollapsed">
-                <form *ngIf="isGroupAdminOrSuperAdmin" class="m-2">
-                  <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Enter email..." [(ngModel)]="inputEmail" id="inputEmail" name="inputEmail" aria-label="Default" aria-describedby="basic-addon2" required>
-                    <div class="input-group-append">
-                      <button class="btn btn-success" type="submit" (click)="addUserToSelectedChannel()">Add to Channel</button>
-                    </div>
-                  </div>
-                </form>
-                <ng-container *ngIf="group.groupAssisUsers">
-                  <div *ngFor="let user of group.groupAssisUsers"> 
-                    <p class="text-white m-2">{{user}}</p>
-                  </div>
-                </ng-container>
+                <div class="d-flex align-items-center justify-content-between m-2" *ngFor="let user of group.groupAssisUsers"> 
+                  <div class="d-flex align-items-center">
+                    <img src="http:\\localhost:3000\images\{{user.profileImage}}" style="width: 80px; clip-path: circle( 35% at 50% 50%)">
+                    <p class="text-white">{{user.username}}</p>
+                  </div>  
+                  <button *ngIf="isGroupAdminOrSuperAdmin" type="button" (click)="removeUserFromGroupAssis(user._id)" class="btn btn-outline-danger btn-sm m-1">Remove</button>
+                </div>
               </div>
             </div>
-
           </div>
         </div>
     </div>
@@ -141,7 +145,7 @@
                 </div>
                 <br>
                 <ng-template #elseBlock>                      
-                  <div *ngIf="message._id !== 'joined'" class="d-flex align-items-end justify-content-start">
+                  <div *ngIf="message._id !== 'joined' && message._id !== 'hasLeft'" class="d-flex align-items-end justify-content-start">
                     <div>
                       <img src="http:\\localhost:3000\images\{{message.user.profileImage}}" style="width: 100px; clip-path: circle( 35% at 50% 50%)">
                     </div>
@@ -183,8 +187,10 @@
                 </div>
               </form>
             </div>
+
           </div>
         </div>
     </div>
   </div>
+  <app-floating-video [hidden]="videoIsHidden" class="floatingVideo"></app-floating-video>
 </div>
