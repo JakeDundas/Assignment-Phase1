@@ -5,15 +5,16 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class ImageUploadService {
-  uri = "http://localhost:3000/"
+  localUri = "http://localhost:3000/"
+  publicUri = "http://192.168.0.3:3000/"
 
   constructor(private httpClient: HttpClient) { }
 
   imageUpload(formData: any) {
-    return this.httpClient.post<any>(this.uri + 'api/upload', formData)
+    return this.httpClient.post<any>(this.localUri + 'api/upload', formData)
   }
 
   getImage(filename: string) {
-    return this.httpClient.get<any>(this.uri + 'images/' + filename)
+    return this.httpClient.get<any>(this.localUri + 'images/' + filename)
   }
 }

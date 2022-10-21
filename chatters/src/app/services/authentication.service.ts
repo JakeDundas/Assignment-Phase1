@@ -6,16 +6,17 @@ import { Router } from '@angular/router';
   providedIn: 'root'
 })
 export class AuthenticationService {
-  uri = "http://localhost:3000/"
+  localUri = "http://localhost:3000/"
+  publicUri = "http://192.168.0.3:3000/"
 
   constructor(private httpClient: HttpClient, private router: Router) { }
   // User signup
   register(user: {username: string, email: string, password: string}) {
-    return this.httpClient.post<any>(this.uri + 'api/register', user);
+    return this.httpClient.post<any>(this.localUri + 'api/register', user);
   }
    // login
   attemptLogin(login: {email: string, password: string}) {
-    return this.httpClient.post<any>(this.uri + 'api/login', login);
+    return this.httpClient.post<any>(this.localUri + 'api/login', login);
   }
 
   // logout

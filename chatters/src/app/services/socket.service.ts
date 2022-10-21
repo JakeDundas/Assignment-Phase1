@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { DefaultEventsMap } from '@socket.io/component-emitter';
 import io, { Socket } from 'socket.io-client';
 
-const SERVER_URL = 'http://localhost:3000/chat';
+const LOCAL_SERVER_URL = 'http://localhost:3000/chat';
+const PUBLIC_SERVER_URL = 'http://192.168.0.3:3000/chat';
 
 
 @Injectable({
@@ -14,7 +15,7 @@ export class SocketService {
   constructor() { }
 
   initSocket(): void {
-    this.socket = io(SERVER_URL);
+    this.socket = io(LOCAL_SERVER_URL);
   }
 
   joinChannel(joinRequest: {channel_id: string, username: string}): void {
