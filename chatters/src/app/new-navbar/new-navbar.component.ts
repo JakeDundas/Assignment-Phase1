@@ -22,13 +22,11 @@ export class NewNavbarComponent implements OnInit {
     })
     
     navbarUpdaterService.loggedInValue.subscribe((nextValue) => {
-      console.log(nextValue)
       if(nextValue == 'true') {
         this.isLoggedIn = true
       } else {
         this.isLoggedIn = false
       }
-      console.log(this.isLoggedIn)
     })
   }
 

@@ -1,4 +1,4 @@
-<nav class="navbar navbar-dark bg-gray-dark fixed-top">
+<nav class="navbar navbar-dark fixed-top ">
     <div class="container-fluid justify-content-between">
         <div>
             <button class="navbar-toggler mx-2" type="button" (click)="isCollapsed = !isCollapsed" aria-controls="offcanvasDarkNavbar" aria-controls="isCollapsed">
@@ -11,7 +11,7 @@
             <button *ngIf="!isLoggedIn" type="button" (click)="navigateToLogin()" class="btn btn-outline-light my-2 my-sm-0">Login</button>
             <button *ngIf="isLoggedIn" type="button" (click)="logOut()" class="btn btn-outline-light my-2 my-sm-0">Log Out</button>
         </div>
-        <div class="offcanvas offcanvas-start text-bg-dark" id="isCollapsed" [ngbCollapse]="isCollapsed" aria-labelledby="offcanvasDarkNavbarLabel" >
+        <div class="offcanvas offcanvas-start text-bg-dark border-end" id="isCollapsed" [ngbCollapse]="isCollapsed" aria-labelledby="offcanvasDarkNavbarLabel" >
             <div class="offcanvas-header">
                 <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" style="fill: rgb(255, 255, 255);transform: ;msFilter:;"><path d="M5 18v3.766l1.515-.909L11.277 18H16c1.103 0 2-.897 2-2V8c0-1.103-.897-2-2-2H4c-1.103 0-2 .897-2 2v8c0 1.103.897 2 2 2h1zM4 8h12v8h-5.277L7 18.234V16H4V8z"></path><path d="M20 2H8c-1.103 0-2 .897-2 2h12c1.103 0 2 .897 2 2v8c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2z"></path></svg>
                 <h5 class="offcanvas-title" id="offcanvasDarkNavbarLabel">chatters</h5>
