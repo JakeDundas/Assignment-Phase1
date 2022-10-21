@@ -42,12 +42,12 @@ module.exports = {
           const database = client.db("chatters");
           const channels = database.collection("channels");
           const query = { _id };
-          const update = { $push: { messages: {_id: message_id, user_id, message: channel_message.message} } };
+          const update = { $push: { messages: {_id: message_id, user_id, message: channel_message.message, type: 'text'} } };
           const result = await channels.updateOne(query, update);
           if (result.modifiedCount === 0) {
             resolve({success: false, error: "Message not sent"})
           } else {
-            resolve({success: true, message: {_id: message_id, user_id, message: channel_message.message}})
+            resolve({success: true, message: {_id: message_id, user_id, message: channel_message.message, type: 'text'}})
           }
         } finally {
           await client.close();
