@@ -20,6 +20,8 @@ async function run() {
         const usersDrop = await users.drop();
         const groupsDrop = await groups.drop();
         const channelsDrop = await channels.drop();
+
+        await users.createIndex( { email: "text" } )
         
         const _id = new ObjectId()
         const user = { 
@@ -32,7 +34,7 @@ async function run() {
         } 
         const result = await users.insertOne(user);
         usersIds.push(_id)
-        for(i=0; i<3 ; i++) {
+        for(i=0; i<30 ; i++) {
             const _id = new ObjectId()
             const user = { 
                 _id,
@@ -47,7 +49,7 @@ async function run() {
         }
         
         //groups
-        for(i=0; i<40; i++) {
+        for(i=0; i<20; i++) {
             const _id = new ObjectId()
             const group = { 
                 _id,
@@ -91,27 +93,4 @@ async function run() {
     }
 }
 run().catch(console.dir);
-
-      
-// async function run() {
-//     try {
-//         const database = client.db("chatters");
-//         const groups = database.collection("groups");
-//         for(i=0; i<1; i++) {
-//             const _id = new ObjectId()
-//             const group = { 
-//                 _id,
-//                 name: faker.lorem.word(), 
-//                 channels: [], 
-//                 users: usersIds, 
-//                 groupAssisUsers: []
-//             } 
-//             const result = await groups.insertOne(group);
-//             groupsIds.push(_id)
-//         }
-//     } finally {
-//         await client.close();
-//     }
-// }
-// run().catch(console.dir);
 
