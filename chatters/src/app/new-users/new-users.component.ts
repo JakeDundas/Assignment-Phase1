@@ -7,12 +7,11 @@ import { DataService } from '../services/data.service';
 import { AuthenticationService } from '../services/authentication.service';
 
 @Component({
-  selector: 'app-users',
-  templateUrl: './users.component.html',
-  styleUrls: ['./users.component.css']
+  selector: 'app-new-users',
+  templateUrl: './new-users.component.html',
+  styleUrls: ['./new-users.component.css']
 })
-
-export class UsersComponent implements OnInit {
+export class NewUsersComponent implements OnInit {
   usersList: User[] = [];
   username: string = "";
   email: string = "";
@@ -39,26 +38,26 @@ export class UsersComponent implements OnInit {
 
   addNewUser() {
     this.authenticationService.register({username: this.username, email: this.email, password: this.password}).subscribe(data => {
-      console.log(data)
+      this.ngOnInit()
     })
   } 
 
   deleteUser(user_id: string) {
-    // this.usersService.deleteUser(user);
-    // this.usersService.saveUsersData();
-    // this.ngOnInit();
+    this.dataService.deleteUser({user_id}).subscribe(data => {
+      this.ngOnInit()
+    })
   }
   
   promoteToGroupAdmin(user_id: string) {
-    // user.role = Role.GroupAdmin;
-    // this.usersService.saveUsersData();
-    // this.ngOnInit();
+    this.dataService.promoteToGroupAdmin({user_id}).subscribe(data => {
+      this.ngOnInit()
+    })
   }
   
   promoteToSuperAdmin(user_id: string) {
-    // user.role = Role.SuperAdmin;
-    // this.usersService.saveUsersData();
-    // this.ngOnInit();
+    this.dataService.promoteToSuperAdmin({user_id}).subscribe(data => {
+      this.ngOnInit()
+    })
   }
 
 }
