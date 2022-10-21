@@ -25,6 +25,7 @@ module.exports = {
         } else {
           const user = { username, email, password, role: 'user'} 
           const result = await users.insertOne(user);
+          console.log(result)
           // print a message if no documents were found
           res.send(doc);
         }
@@ -359,6 +360,30 @@ module.exports = {
     run().catch(console.dir);
   },
 
+  removeUserFromGroupAssis: (req, res) => {
+    if (!req.body) {
+      return res.sendStatus(400);
+    }
+    const group_id = ObjectId(req.body.group_id);
+    const user_id = ObjectId(req.body.user_id);
+    
+    const client = new MongoClient(uri);
+    async function run() {
+      try {
+        const database = client.db("chatters");
+        const groups = database.collection("groups");
+        const query = { _id: group_id };
+        const update = { $pull: { groupAssisUsers: user_id } }
+        const doc = await groups.updateOne(query, update);
+        console.log(doc)
+        res.send(doc);
+      } finally {
+        await client.close();
+      }
+    }
+    run().catch(console.dir);
+  },
+
   getMessageHistory: (req, res) => {
     if (!req.body) {
       return res.sendStatus(400);
@@ -508,13 +533,39 @@ module.exports = {
     run().catch(console.dir);
   },
 
+  getUsersLike: (req, res) => {
+    if (!req.body) {
+      return res.sendStatus(400);
+    }
+    const user_query = req.body.user_query;
+
+    const client = new MongoClient(uri);
+    async function run() {
+      try {
+        const database = client.db("chatters");
+        const users = database.collection("users");
+        const query = { email: { $regex: user_query } };
+        const projection = {username: 1, email: 1, role: 1, profileImage: 1}
+        const cursor = await users.find(query).project(projection).toArray();
+        console.log(query, cursor)
+        if (!cursor) {
+          res.send({ success: false, error: "No users found"})
+        } else {
+          res.send({ success: true, users: cursor })
+        }
+      } finally {
+        await client.close();
+      }
+    }
+    run().catch(console.dir);
+  },
+
   getUsersDetails: (req, res) => {
     if (!req.body) {
       return res.sendStatus(400);
     }
     const userIdArray = req.body;
     const userObjectIdArray = userIdArray.map(x => ObjectId(x))
-    console.log(userIdArray, userObjectIdArray) 
 
     const client = new MongoClient(uri);
     async function run() {
@@ -550,6 +601,79 @@ module.exports = {
         const users = database.collection("users");
         const query = { _id };
         const update = { $set: {profileImage: imageName} }
+        const doc = await users.updateOne(query, update);
+        console.log(doc)
+        res.send(doc);
+      } finally {
+        await client.close();
+      }
+    }
+    run().catch(console.dir);
+  },
+
+  deleteUser: (req, res) => {
+    if (!req.body) {
+      return res.sendStatus(400);
+    }
+    const _id = ObjectId(req.body.user_id);
+
+    const client = new MongoClient(uri);
+    async function run() {
+      try {
+        const database = client.db("chatters");
+        const users = database.collection("users");
+        const query = { _id };
+        const result = await users.deleteOne(query);
+        if (result.deletedCount === 1) {
+          console.log("Successfully deleted one document.");
+          res.send({success: true})
+        } else {
+          console.log("No documents matched the query. Deleted 0 documents.");
+          res.send({success: false})
+        }
+      } finally {
+        await client.close();
+      }
+    }
+    run().catch(console.dir);
+  },
+  
+  promoteToGroupAdmin: (req, res) => {
+    if (!req.body) {
+      return res.sendStatus(400);
+    }
+    const _id = ObjectId(req.body.user_id);
+
+    const client = new MongoClient(uri);
+    async function run() {
+      try {
+        const database = client.db("chatters");
+        const users = database.collection("users");
+        const query = { _id };
+        const update = { $set: {role: "groupAdmin"} }
+        const doc = await users.updateOne(query, update);
+        console.log(doc)
+        res.send(doc);
+      } finally {
+        await client.close();
+      }
+    }
+    run().catch(console.dir);
+  },
+
+  promoteToSuperAdmin: (req, res) => {
+    if (!req.body) {
+      return res.sendStatus(400);
+    }
+    const _id = ObjectId(req.body.user_id);
+
+    const client = new MongoClient(uri);
+    async function run() {
+      try {
+        const database = client.db("chatters");
+        const users = database.collection("users");
+        const query = { _id };
+        const update = { $set: {role: "superAdmin"} }
         const doc = await users.updateOne(query, update);
         console.log(doc)
         res.send(doc);
