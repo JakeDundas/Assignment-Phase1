@@ -43,3 +43,4 @@ Thumbs.db
 
 # Mine
 /server/userImages/*
+/server/node_modules
