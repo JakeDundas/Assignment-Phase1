@@ -12,7 +12,7 @@ module.exports = {
     const email = req.body.email;
     const password = req.body.password;
     
-    const client = new MongoCjlient(uri);
+    const client = new MongoClient(uri);
     async function run() {
       try {
         const database = client.db("chatters");
@@ -21,13 +21,13 @@ module.exports = {
         const query = { $or: [ { username }, { email } ] } 
         const doc = await users.findOne(query);
         if (doc) {
-          res.send({error: "Email or username taken."})
+          res.send({success: false, error: "Email or username taken."})
         } else {
-          const user = { username, email, password, role: 'user'} 
+          const user = { username, email, password, role: 'user', profileImage: 'default_profile.png'} 
           const result = await users.insertOne(user);
           console.log(result)
           // print a message if no documents were found
-          res.send(doc);
+          res.send({success: true, insertedId: result.insertedId});
         }
       } finally {
         await client.close();
@@ -49,9 +49,10 @@ module.exports = {
         const database = client.db("chatters");
         const users = database.collection("users");
         const query = { email, password }  
-        const doc = await users.findOne(query);
+        const options = { projection: {username: 1, email: 1, role: 1} };
+        const doc = await users.findOne(query, options);
         if (!doc) {
-          res.send({error: "Incorrect email or password"})
+          res.send({success: false, error: "Incorrect email or password"})
         } else {
           res.send({user: doc});
         }
@@ -77,9 +78,9 @@ module.exports = {
         const query = { users: _id }
         const cursor = await groups.find(query).project(projection).toArray();
         if (!cursor) {
-          res.send({error: "No groups found"})
+          res.send({success: false, error: "No groups found"})
         } else {
-          res.send({groups: cursor})
+          res.send({success: true, groups: cursor})
         }
       } finally {
         await client.close();
@@ -115,6 +116,7 @@ module.exports = {
     if (!req.body) {
       return res.sendStatus(400);
     }
+    console.log("infunc", req.body)
     const _id = ObjectId(req.body.group_id);
 
     const client = new MongoClient(uri);
@@ -125,9 +127,9 @@ module.exports = {
         const query = { _id }
         const doc = await groups.findOne(query);
         if (!doc) {
-          res.send({error: "No group found"})
+          res.send({success: false, error: "No group found"})
         } else {
-          res.send({group: doc})
+          res.send({success: true, group: doc})
         }
       } finally {
         await client.close();
@@ -148,9 +150,9 @@ module.exports = {
         const database = client.db("chatters");
         const groups = database.collection("groups");
         const group = { name };
-        const doc = await groups.insertOne(group);
-        console.log(doc)
-        res.send(doc);
+        const result = await groups.insertOne(group);
+        console.log(result)
+        res.send({success: true, insertedId: result.insertedId});
       } finally {
         await client.close();
       }
@@ -172,7 +174,7 @@ module.exports = {
         const group = { _id };
         const doc = await groups.deleteOne(group);
         console.log(doc)
-        res.send(doc);
+        res.send({success: true, doc});
       } finally {
         await client.close();
       }
@@ -195,8 +197,7 @@ module.exports = {
         const query = { _id };
         const update = { $push: { groupAssisUsers: user_id } };
         const doc = await groups.updateOne(query, update);
-        console.log(doc)
-        res.send(doc);
+        res.send({success: true, modifiedCount: doc.modifiedCount});
       } finally {
         await client.close();
       }
@@ -220,7 +221,7 @@ module.exports = {
         console.log(query)
         const doc = await users.findOne(query);
         if(!doc) {
-          res.send({error: 'Email not found'})
+          res.send({success: false, error: 'Email not found'})
         } else {
           const groups = database.collection("groups");
           const _id = doc._id;
@@ -234,7 +235,7 @@ module.exports = {
             console.log(doc)
             res.send({success: true, doc});
           } else if (await cursor.count() !== 0) {
-            res.send({error: 'User already in group'})
+            res.send({success: false, error: 'User already in group'})
           }
         }
       } finally {
@@ -259,9 +260,9 @@ module.exports = {
         const query = { group_id }
         const cursor = await channels.find(query).project(projection).toArray();
         if (!cursor) {
-          res.send({error: "No channels found"})
+          res.send({success: false, error: "No channels found"})
         } else {
-          res.send({channels: cursor})
+          res.send({success: true, channels: cursor})
         }
       } finally {
         await client.close();
@@ -286,9 +287,9 @@ module.exports = {
         const query = {group_id, users: user_id}
         const cursor = await channels.find(query).project(projection).toArray();
         if (!cursor) {
-          res.send({error: "No channels found"})
+          res.send({success: false, error: "No channels found"})
         } else {
-          res.send({channels: cursor})
+          res.send({success: true, channels: cursor})
         }
       } finally {
         await client.close();
@@ -352,7 +353,7 @@ module.exports = {
         const update = { $pull: { users: user_id } }
         const doc = await channels.updateOne(query, update);
         console.log(doc)
-        res.send(doc);
+        res.send({success: true, doc});
       } finally {
         await client.close();
       }
@@ -376,39 +377,13 @@ module.exports = {
         const update = { $pull: { groupAssisUsers: user_id } }
         const doc = await groups.updateOne(query, update);
         console.log(doc)
-        res.send(doc);
+        res.send({success: true, doc});
       } finally {
         await client.close();
       }
     }
     run().catch(console.dir);
   },
-
-  // getMessageHistory: (req, res) => {
-  //   if (!req.body) {
-  //     return res.sendStatus(400);
-  //   }
-  //   const channel_id = ObjectId(req.body.channel_id);
-    
-  //   const client = new MongoClient(uri);
-  //   async function run() {
-  //     try {
-  //       const database = client.db("chatters");
-  //       const channels = database.collection("channels");
-  //       const options = { projection: { messages: 1 } };
-  //       const query = { _id: channel_id}
-  //       const cursor = await channels.findOne(query, options);
-  //       if (!cursor) {
-  //         res.send({error: "No channels found"})
-  //       } else {
-  //         res.send({channel: cursor})
-  //       }
-  //     } finally {
-  //       await client.close();
-  //     }
-  //   }
-  //   run().catch(console.dir);
-  // },
 
   addNewChannel: (req, res) => {
     if (!req.body) {
@@ -429,7 +404,7 @@ module.exports = {
           messages: [],
         } 
         const result = await channels.insertOne(channel);  
-        res.send(result);
+        res.send({success: true, insertedId: result.insertedId});
       } finally {
         await client.close();
       }
@@ -451,7 +426,7 @@ module.exports = {
         const channel = { _id };
         const doc = await channels.deleteOne(channel);
         console.log(doc)
-        res.send(doc);
+        res.send({success: true, doc});
       } finally {
         await client.close();
       }
@@ -475,7 +450,7 @@ module.exports = {
         const update = { $pull: { users: user_id } }
         const doc = await groups.updateOne(query, update);
         console.log(doc)
-        res.send(doc);
+        res.send({success: true, doc});
       } finally {
         await client.close();
       }
@@ -603,7 +578,7 @@ module.exports = {
         const update = { $set: {profileImage: imageName} }
         const doc = await users.updateOne(query, update);
         console.log(doc)
-        res.send(doc);
+        res.send({success: true, modifiedCount: doc.modifiedCount});
       } finally {
         await client.close();
       }
@@ -653,7 +628,7 @@ module.exports = {
         const update = { $set: {role: "groupAdmin"} }
         const doc = await users.updateOne(query, update);
         console.log(doc)
-        res.send(doc);
+        res.send({success: true, modifiedCount: doc.modifiedCount});
       } finally {
         await client.close();
       }
@@ -676,7 +651,7 @@ module.exports = {
         const update = { $set: {role: "superAdmin"} }
         const doc = await users.updateOne(query, update);
         console.log(doc)
-        res.send(doc);
+        res.send({success: true, modifiedCount: doc.modifiedCount});
       } finally {
         await client.close();
       }
