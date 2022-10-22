@@ -1,8 +1,5 @@
-const dbOperations = require("./routes/dbOperations");
-
 module.exports = {
-  connect: function (peerServer, PORT) {
-    let socketRoom = [];
+  connect(peerServer, PORT) {
 
     peerServer.on("connection", async (client) => {
       // When a connection request comes in output to the server console
@@ -10,8 +7,8 @@ module.exports = {
     })
 
     peerServer.on("disconnect", async (client) => {
-      // When a connection request comes in output to the server console
-      console.log("Peer disconnection " + PORT + ": " + client);
+      // When a disconnection request comes in output to the server console
+      console.log("Peer disconnection " + PORT + ": " + client.id);
     })
   },
 };

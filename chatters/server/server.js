@@ -10,18 +10,11 @@ const io = require("socket.io")(http, {
   }
 })
 
-var ExpressPeerServer = require('peer').ExpressPeerServer;
-var peerExpress = require('express');
-var peerApp = peerExpress();
-var peerServer = require('http').createServer(peerApp);
-var options = { debug: true }
-var peerPort = 9000;
-var peerEServe = ExpressPeerServer(peerServer, options);
-peerApp.use('/peerjs', peerEServe);
-
-// const { ExpressPeerServer } = require('peer');
-// const peerServer  = ExpressPeerServer(http)
-// app.use('/peerjs', peerServer)
+const ExpressPeerServer = require('peer').ExpressPeerServer;
+const peerApp = express();
+const peerServer = require('http').createServer(peerApp);
+const expressPeerServer = ExpressPeerServer(peerServer, { debug: true });
+peerApp.use('/peerjs', expressPeerServer);
 
 app.use(express.urlencoded({extended: true}));
 app.use(express.json())
@@ -68,15 +61,19 @@ app.post('/api/promoteToSuperAdmin', api.promoteToSuperAdmin)
 
 app.post('/api/upload', uploads.upload)
 
-// Define port used for server
-const PORT = 3000
+// Define port used for socket server
+const SOCKET_PORT = 3000
+
+// Define port used for peerhs server
+const PEER_PORT = 9000
 
 // Setup socket
-sockets.connect(io, PORT);
+sockets.connect(io, PEER_PORT);
 
-peerjs.connect(peerEServe, peerPort)
+// Setup peerjs
+peerjs.connect(expressPeerServer, SOCKET_PORT)
 
 // Start server listening for requests.
-server.listen(http, PORT);
-server.listen(peerServer, peerPort);
+server.listen(http, PEER_PORT);
+server.listen(peerServer, SOCKET_PORT);
 

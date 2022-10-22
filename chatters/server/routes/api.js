@@ -12,7 +12,7 @@ module.exports = {
     const email = req.body.email;
     const password = req.body.password;
     
-    const client = new MongoClient(uri);
+    const client = new MongoCjlient(uri);
     async function run() {
       try {
         const database = client.db("chatters");
@@ -384,31 +384,31 @@ module.exports = {
     run().catch(console.dir);
   },
 
-  getMessageHistory: (req, res) => {
-    if (!req.body) {
-      return res.sendStatus(400);
-    }
-    const channel_id = ObjectId(req.body.channel_id);
+  // getMessageHistory: (req, res) => {
+  //   if (!req.body) {
+  //     return res.sendStatus(400);
+  //   }
+  //   const channel_id = ObjectId(req.body.channel_id);
     
-    const client = new MongoClient(uri);
-    async function run() {
-      try {
-        const database = client.db("chatters");
-        const channels = database.collection("channels");
-        const options = { projection: { messages: 1 } };
-        const query = { _id: channel_id}
-        const cursor = await channels.findOne(query, options);
-        if (!cursor) {
-          res.send({error: "No channels found"})
-        } else {
-          res.send({channel: cursor})
-        }
-      } finally {
-        await client.close();
-      }
-    }
-    run().catch(console.dir);
-  },
+  //   const client = new MongoClient(uri);
+  //   async function run() {
+  //     try {
+  //       const database = client.db("chatters");
+  //       const channels = database.collection("channels");
+  //       const options = { projection: { messages: 1 } };
+  //       const query = { _id: channel_id}
+  //       const cursor = await channels.findOne(query, options);
+  //       if (!cursor) {
+  //         res.send({error: "No channels found"})
+  //       } else {
+  //         res.send({channel: cursor})
+  //       }
+  //     } finally {
+  //       await client.close();
+  //     }
+  //   }
+  //   run().catch(console.dir);
+  // },
 
   addNewChannel: (req, res) => {
     if (!req.body) {

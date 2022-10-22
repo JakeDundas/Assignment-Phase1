@@ -17,9 +17,8 @@ module.exports = {
           const options = { projection: { messages: 1 } };
           const query = { _id }
           const result = await channels.findOne(query, options);
-          console.log("getMessageHistory()", result)
           if (!result) {
-            resolve({success: false, error: "No channels found"})
+            resolve({success: false, error: "Unable to retrieve message history"})
           } else {
             resolve({success: true, channel: result})
           }
