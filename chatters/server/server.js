@@ -67,15 +67,15 @@ const SOCKET_PORT = 3000
 const PEER_PORT = 9000
 
 // Setup socket
-sockets.connect(io, PEER_PORT);
+sockets.connect(io, SOCKET_PORT);
 
 // Setup peerjs
-peerjs.connect(expressPeerServer, SOCKET_PORT)
+peerjs.connect(expressPeerServer, PEER_PORT)
 
 // Start server listening for requests.
-server.listen(http, PEER_PORT);
+server.listen(http, SOCKET_PORT);
 
-server.listen(peerServer, SOCKET_PORT);
+server.listen(peerServer, PEER_PORT);
 
 module.exports = app
 
