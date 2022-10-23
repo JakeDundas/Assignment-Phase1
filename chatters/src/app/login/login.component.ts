@@ -21,6 +21,8 @@ export class LoginComponent implements OnInit {
   attemptLogin() {
     this.authenticationService.attemptLogin({email: this.email, password: this.password}).subscribe((res: any) => {
       if(res.error) {
+        this.email = "";
+        this.password = "";
         alert(res.error)
         return;
       }
