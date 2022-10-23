@@ -45,14 +45,14 @@ export class NewChatComponent implements OnInit {
   channelsIsCollapsed = true;
   membersIsCollapsed = true;
   assisIsCollapsed = true;
-  
+
   videoIsHidden = true;
   @ViewChild(FloatingVideoComponent) floatingVideo!: any;
 
   selectedFile: any;
 
 
-  constructor(private route: ActivatedRoute, private router: Router, private dataService: DataService, private socketService: SocketService, private imageUploadService: ImageUploadService, private videoChatService: VideoChatService)  {
+  constructor(private route: ActivatedRoute, private router: Router, private dataService: DataService, private socketService: SocketService, private imageUploadService: ImageUploadService, private videoChatService: VideoChatService) {
     if (localStorage.getItem('isLoggedIn') != 'true') {
       this.router.navigate(['login'])
     }
@@ -81,8 +81,8 @@ export class NewChatComponent implements OnInit {
 
     this.socketService.getMessage((response: any) => {
       if (response.success) {
-        this.dataService.getUser({user_id: response.message.user_id}).subscribe((res: any) => {
-          this.messages.push({_id: response.message._id, message: response.message.message, user: res.user, type: response.message.type})
+        this.dataService.getUser({ user_id: response.message.user_id }).subscribe((res: any) => {
+          this.messages.push({ _id: response.message._id, message: response.message.message, user: res.user, type: response.message.type })
         })
       } else {
         console.log(response.error)
@@ -93,43 +93,43 @@ export class NewChatComponent implements OnInit {
       if (response.success) {
         response.channel.messages.forEach((message: any) => {
           const userInGroup = this.group.users.find(x => x._id === message.user_id)
-          if(userInGroup) {
-            this.messages.push({_id: message._id, message: message.message, user: userInGroup, type: message.type})
+          if (userInGroup) {
+            this.messages.push({ _id: message._id, message: message.message, user: userInGroup, type: message.type })
           } else {
-            this.dataService.getUser({user_id: message.user_id}).subscribe((res: any) => {
-              this.messages.push({_id: message._id, message: message.message, user: res.user, type: res.type})
+            this.dataService.getUser({ user_id: message.user_id }).subscribe((res: any) => {
+              this.messages.push({ _id: message._id, message: message.message, user: res.user, type: res.type })
             })
           }
         })
+        console.log(this.messages)
       } else {
         console.log(response.error)
       }
     })
 
     this.socketService.joined((response: any) => {
-      this.messages.push({_id: "joined", message: `${response} has joined the conversation`, user: {_id: "", username: "", email: "", role: "", profileImage: ""}, type: "text"});
+      this.messages.push({ _id: "joined", message: `${response} has joined the conversation`, user: { _id: "", username: "", email: "", role: "", profileImage: "" }, type: "text" });
     })
 
     this.socketService.hasLeft((response: any) => {
-      this.messages.push({_id: "hasLeft", message: `${response} has left the conversation`, user: {_id: "", username: "", email: "", role: "", profileImage: ""}, type: "text"});
+      this.messages.push({ _id: "hasLeft", message: `${response} has left the conversation`, user: { _id: "", username: "", email: "", role: "", profileImage: "" }, type: "text" });
     })
 
   }
 
   getGroupDetails() {
     this.dataService.getGroup({ group_id: this.groupId }).subscribe((res: any) => {
-      this.group = {_id: this.groupId, name: res.group.name, groupAssisUsers: [], users: []};
+      this.group = { _id: this.groupId, name: res.group.name, groupAssisUsers: [], users: [] };
       const userIdArray = res.group.users
       const userAssisIdArray = res.group.groupAssisUsers
-      if(userIdArray) {
-        this.dataService.getUsersDetails(userIdArray).subscribe((res: any) => {
-          this.group.users = res.users;
-          this.dataService.getUsersDetails(userAssisIdArray).subscribe((res: any) => {
-            this.group.groupAssisUsers = res.users;
-            this.initialiseChannelsForUser();
-          })
+      this.dataService.getUsersDetails(userIdArray).subscribe((res: any) => {
+        this.group.users = res.users;
+        this.dataService.getUsersDetails(userAssisIdArray).subscribe((res: any) => {
+          this.group.groupAssisUsers = res.users;
+          console.log(this.group.groupAssisUsers)
+          this.initialiseChannelsForUser();
         })
-      }
+      })
     })
   }
 
@@ -137,14 +137,17 @@ export class NewChatComponent implements OnInit {
     const currentRole = localStorage.getItem('role');
     const user_id = localStorage.getItem('userId') ?? "";
     if (currentRole == 'groupAdmin' || currentRole == 'superAdmin') {
+      console.log("groupAdmin/superAdmin")
       this.isGroupAdminOrSuperAdmin = true;
       this.isGroupAssis = false;
       this.getAllChannels();
     } else if (this.group.groupAssisUsers.some(x => x._id === user_id)) {
+      console.log("group Assis")
       this.isGroupAdminOrSuperAdmin = false;
       this.isGroupAssis = true;
       this.getAllChannels();
     } else {
+      console.log("user")
       this.isGroupAdminOrSuperAdmin = false;
       this.isGroupAssis = false;
       this.getUserChannels();
@@ -159,11 +162,11 @@ export class NewChatComponent implements OnInit {
         const detailedUsers: User[] = []
         channel.users.forEach((user_id: any) => {
           const user = this.group.users.find(x => x._id === user_id)
-          if(typeof user !== "undefined") {
+          if (typeof user !== "undefined") {
             detailedUsers.push(user)
           }
         })
-        this.channels.push({_id: channel._id, name: channel.name, users: detailedUsers})
+        this.channels.push({ _id: channel._id, name: channel.name, users: detailedUsers })
       })
     })
   }
@@ -176,11 +179,11 @@ export class NewChatComponent implements OnInit {
         const detailedUsers: User[] = []
         channel.users.forEach((user_id: any) => {
           const user = this.group.users.find(x => x._id === user_id)
-          if(typeof user !== "undefined") {
+          if (typeof user !== "undefined") {
             detailedUsers.push(user)
           }
         })
-        this.channels.push({_id: channel._id, name: channel.name, users: detailedUsers})
+        this.channels.push({ _id: channel._id, name: channel.name, users: detailedUsers })
       })
     })
   }
@@ -192,19 +195,18 @@ export class NewChatComponent implements OnInit {
       this.messages = [];
       this.currentChannel = "";
     } else {
-      this.dataService.getMessageHistory({ channel_id: _id }).subscribe((res: any) => {
-        this.messages = [];
-        this.currentChannel = res.channel._id;
-        console.log(_id, this.currentUserUsername)
-        this.socketService.joinChannel({ channel_id: _id, username: this.currentUserUsername });
-        this.reqChannelMessageHistory();
-      })
+      this.messages = [];
+      this.currentChannel = _id;
+      console.log(_id, this.currentUserUsername)
+      this.socketService.joinChannel({ channel_id: _id, username: this.currentUserUsername });
+      this.reqChannelMessageHistory();
     }
   }
 
   addNewChannel() {
     if (this.groupName) {
       this.dataService.addNewChannel({ group_id: this.groupId, name: this.groupName }).subscribe((res: any) => {
+        console.log(res)
         this.groupName = ""
         this.ngOnInit();
       })
@@ -223,7 +225,7 @@ export class NewChatComponent implements OnInit {
   addUserToGroup() {
     if (this.userQuery) {
       this.dataService.addUserToGroup({ group_id: this.groupId, email: this.userQuery }).subscribe((res: any) => {
-        console.log()
+        console.log(res)
         this.ngOnInit();
       })
     }
@@ -304,7 +306,7 @@ export class NewChatComponent implements OnInit {
   }
 
   onUpload() {
-    if (this.selectedFile && this.currentChannel) {
+    if (this.selectedFile && this.currentChannel && (this.currentUserId)) {
       const formData = new FormData()
       formData.append('image', this.selectedFile, this.selectedFile.name)
       this.imageUploadService.imageUpload(formData).subscribe((res: any) => {
@@ -319,18 +321,18 @@ export class NewChatComponent implements OnInit {
     this.floatingVideo.videoConnect(user_id)
   }
 
-  updateGroupMemberDataList(){
+  updateGroupMemberDataList() {
     this.groupMemberSearch = this.group.users.filter(x => x.email.toLowerCase().includes(this.groupMemberQuery));
   }
 
-  updateGroupMemberAssisDataList(){
+  updateGroupMemberAssisDataList() {
     this.groupMemberAssisSearch = this.group.users.filter(x => x.email.toLowerCase().includes(this.groupMemberAssisQuery));
-    console.log( this.groupMemberAssisSearch)
-    console.log( this.groupMemberAssisQuery)
+    console.log(this.groupMemberAssisSearch)
+    console.log(this.groupMemberAssisQuery)
   }
 
-  updateUserDataList(){
-    this.dataService.getUsersLike({user_query: this.userQuery}).subscribe((data) => {
+  updateUserDataList() {
+    this.dataService.getUsersLike({ user_query: this.userQuery }).subscribe((data) => {
       if (data.success) {
         console.log(data.users)
         this.userSearch = data.users;
@@ -340,5 +342,5 @@ export class NewChatComponent implements OnInit {
     })
   }
 
-  
+
 }

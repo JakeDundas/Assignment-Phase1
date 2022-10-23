@@ -16,7 +16,7 @@ export class NewUsersComponent implements OnInit {
   username: string = "";
   email: string = "";
   password: string = "";
-  isGroupAdminOrSuperAdmin: boolean = false;
+  isSuperAdmin: boolean = false;
 
   constructor(private router: Router, private dataService: DataService, private authenticationService: AuthenticationService) {
     if(localStorage.getItem('isLoggedIn') != 'true') {
@@ -26,7 +26,7 @@ export class NewUsersComponent implements OnInit {
 
   ngOnInit(): void {
     const currentRole = localStorage.getItem('role');
-    this.isGroupAdminOrSuperAdmin = currentRole == 'groupAdmin' || currentRole == 'superAdmin' ? true : false;
+    this.isSuperAdmin = currentRole == 'superAdmin'
     this.dataService.getAllUsers().subscribe((res: any) => {
       if(res.success) {
         this.usersList = res.users;
@@ -38,6 +38,9 @@ export class NewUsersComponent implements OnInit {
 
   addNewUser() {
     this.authenticationService.register({username: this.username, email: this.email, password: this.password}).subscribe(data => {
+      this.username = "";
+      this.email = "";
+      this.password = "";
       this.ngOnInit()
     })
   } 

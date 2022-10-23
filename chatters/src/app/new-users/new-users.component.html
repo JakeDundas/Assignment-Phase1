@@ -1,6 +1,6 @@
-<div *ngIf="isGroupAdminOrSuperAdmin" class="container-fluid" style="height: 88vh;">
+<div class="container-fluid" style="height: 88vh;">
     <div class="row" style="height: inherit;">
-      <div *ngIf="isGroupAdminOrSuperAdmin" class="col col-lg-3 border-end" style="height: inherit;">
+      <div  class="col col-lg-3 border-end" style="height: inherit;">
           <div class="container-fluid ">
                 <form class="bg-dark">
                   <div class="mb-3">
@@ -55,9 +55,9 @@
                               <td>{{user.role}}</td>
                               <td>
                                 <div class="d-flex">
-                                  <button *ngIf="isGroupAdminOrSuperAdmin" type="button" (click)="promoteToGroupAdmin(user._id)" class="btn btn-outline-info btn-sm m-2">Group Admin</button>
-                                  <button *ngIf="isGroupAdminOrSuperAdmin" type="button" (click)="promoteToSuperAdmin(user._id)" class="btn btn-outline-info btn-sm m-2">Super Admin</button>
-                                  <button *ngIf="isGroupAdminOrSuperAdmin" type="button" (click)="deleteUser(user._id)" class="btn btn-outline-danger btn-sm m-2">Delete</button>
+                                  <button *ngIf="isSuperAdmin" type="button" (click)="promoteToGroupAdmin(user._id)" class="btn btn-outline-info btn-sm m-2">Group Admin</button>
+                                  <button *ngIf="isSuperAdmin" type="button" (click)="promoteToSuperAdmin(user._id)" class="btn btn-outline-info btn-sm m-2">Super Admin</button>
+                                  <button *ngIf="isSuperAdmin" type="button" (click)="deleteUser(user._id)" class="btn btn-outline-danger btn-sm m-2">Delete</button>
                                 </div>
                               </td>
                             </tr>

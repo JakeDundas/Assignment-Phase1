@@ -149,7 +149,7 @@ module.exports = {
       try {
         const database = client.db("chatters");
         const groups = database.collection("groups");
-        const group = { name };
+        const group = { name, channels: [], users: [] };
         const result = await groups.insertOne(group);
         console.log(result)
         res.send({success: true, insertedId: result.insertedId});
@@ -403,8 +403,17 @@ module.exports = {
           users: [], 
           messages: [],
         } 
-        const result = await channels.insertOne(channel);  
-        res.send({success: true, insertedId: result.insertedId});
+        const result = await channels.insertOne(channel);
+        console.log(result)  
+        if(result.acknowledged) {
+          const groups = database.collection("groups");
+          const query = { _id: group_id };
+          const update = { $push: { channels: result.insertedId } }
+          const doc = await groups.updateOne(query, update);
+          res.send({success: true, insertedId: result.insertedId});
+        } else {
+          res.send({success: false, error: "Could not add new channel"});
+        }
       } finally {
         await client.close();
       }
