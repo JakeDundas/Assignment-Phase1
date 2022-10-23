@@ -49,7 +49,7 @@ async function run() {
         }
         
         //groups
-        for(i=0; i<20; i++) {
+        for(i=0; i<5; i++) {
             const _id = new ObjectId()
             const group = { 
                 _id,
