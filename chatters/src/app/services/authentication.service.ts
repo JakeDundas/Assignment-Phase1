@@ -7,7 +7,6 @@ import { Router } from '@angular/router';
 })
 export class AuthenticationService {
   localUri = "http://localhost:3000/"
-  publicUri = "http://192.168.0.3:3000/"
 
   constructor(private httpClient: HttpClient, private router: Router) { }
   // User signup
@@ -29,12 +28,4 @@ export class AuthenticationService {
       this.router.navigate(['login'])
     }
   }  
-//    // save messagep
-//  saveMessage(user) {
-//    return this.httpClient.post<any>(this.messageUrl, user);
-//   }
-//     // get Email Marketing Messages
-//     allMessages(newUser) {
-//      return this.httpClient.get<any>(this.getMessageUrl + newUser.room);
-//    }
 }

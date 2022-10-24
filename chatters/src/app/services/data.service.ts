@@ -6,7 +6,6 @@ import { HttpClient } from '@angular/common/http';
 })
 export class DataService {
   localUri = "http://localhost:3000/"
-  publicUri = "http://192.168.0.3:3000/"
 
   constructor(private httpClient: HttpClient) { }
 
@@ -21,7 +20,7 @@ export class DataService {
     return this.httpClient.get<any>(this.localUri + 'api/getAllGroups');
   }
 
-  // Get all groups
+  // Get a group from id
   getGroup(group: { group_id: string }) {
     return this.httpClient.post<any>(this.localUri + 'api/getGroup', group);
   }
@@ -31,7 +30,7 @@ export class DataService {
     return this.httpClient.post<any>(this.localUri + 'api/addNewGroup', group);
   }
 
-  // Add new group
+  // Delete one group by id
   deleteGroup(group: { group_id: string }) {
     return this.httpClient.post<any>(this.localUri + 'api/deleteGroup', group);
   }
@@ -41,7 +40,7 @@ export class DataService {
     return this.httpClient.post<any>(this.localUri + 'api/promoteUserToGroupAssis', group);
   }
 
-  // Promote User To Group Assis
+  // Add User to group
   addUserToGroup(user: { group_id: string, email: string }) {
     return this.httpClient.post<any>(this.localUri + 'api/addUserToGroup', user);
   }
@@ -51,13 +50,13 @@ export class DataService {
     return this.httpClient.post<any>(this.localUri + 'api/removeUserFromGroup', group);
   }
 
-  // remove User From Group
+  // remove User From Group Assis
   removeUserFromGroupAssis(group: { group_id: string, user_id: string }) {
     return this.httpClient.post<any>(this.localUri + 'api/removeUserFromGroupAssis', group);
   }
 
   // Channels
-  // Get channels for a group that user is in
+  // Get channels in a group that user is in
   getAllUserChannelsInGroup(group: { group_id: string, user_id: string | null }) {
     return this.httpClient.post<any>(this.localUri + 'api/getAllUserChannelsInGroup', group);
   }
@@ -67,27 +66,22 @@ export class DataService {
     return this.httpClient.post<any>(this.localUri + 'api/getAllChannelsInGroup', group);
   }
 
-  // Add new channel
+  // Add new channel to a group
   addNewChannel(group: { group_id: string, name: string }) {
     return this.httpClient.post<any>(this.localUri + 'api/addNewChannel', group);
   }
 
-  // Promote User To Group Assis
+  // Add user to channel
   addUserToChannel(user: { channel_id: string, email: string }) {
     return this.httpClient.post<any>(this.localUri + 'api/addUserToChannel', user);
   }
 
-  // Get message history for channel
-  getMessageHistory(channel: { channel_id: string }) {
-    return this.httpClient.post<any>(this.localUri + 'api/getMessageHistory', channel);
-  }
-
-  // Add new group
+  // remove user from channel
   removeUserFromChannel(channel: { channel_id: string, user_id: string }) {
     return this.httpClient.post<any>(this.localUri + 'api/removeUserFromChannel', channel);
   }
 
-  // Add new group
+  // delete channel from id
   deleteChannel(channel: { channel_id: string }) {
     return this.httpClient.post<any>(this.localUri + 'api/deleteChannel', channel);
   }
@@ -98,37 +92,37 @@ export class DataService {
     return this.httpClient.get<any>(this.localUri + 'api/getAllUsers');
   }
 
-  // Get all users
+  // Get all users with email containing the string
   getUsersLike(user: {user_query: string}) {
     return this.httpClient.post<any>(this.localUri + 'api/getUsersLike', user);
   }
 
-  // Get a user
+  // Get a users details from id
   getUser(user: {user_id: string}) {
     return this.httpClient.post<any>(this.localUri + 'api/getUser', user);
   }
 
-  // Get a user
+  // Update user's profileImage 
   updateUserProfileImage(user: {user_id: string, imageName: string}) {
     return this.httpClient.post<any>(this.localUri + 'api/updateUserProfileImage', user);
   }
   
-  // getUsersDetails
+  // get details of users in an array of user id's
   getUsersDetails(users: string[]) {
     return this.httpClient.post<any>(this.localUri + 'api/getUsersDetails', users);
   }
   
-  // deleteUser
+  // delete User
   deleteUser(user: {user_id: string}) {
     return this.httpClient.post<any>(this.localUri + 'api/deleteUser', user);
   }
   
-  // promoteToGroupAdmin
+  // promote user To Group Admin
   promoteToGroupAdmin(user: {user_id: string}) {
     return this.httpClient.post<any>(this.localUri + 'api/promoteToGroupAdmin', user);
   }
   
-  // promoteToSuperAdmin
+  // promote user To Super Admin
   promoteToSuperAdmin(user: {user_id: string}) {
     return this.httpClient.post<any>(this.localUri + 'api/promoteToSuperAdmin', user);
   }

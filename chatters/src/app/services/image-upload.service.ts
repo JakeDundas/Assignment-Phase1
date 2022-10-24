@@ -6,7 +6,6 @@ import { Injectable } from '@angular/core';
 })
 export class ImageUploadService {
   localUri = "http://localhost:3000/"
-  publicUri = "http://192.168.0.3:3000/"
 
   constructor(private httpClient: HttpClient) { }
 
